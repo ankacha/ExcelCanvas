@@ -37,6 +37,7 @@ namespace CanvasTest
 
 
 
+
         // Constructor for MainWindow
         public MainWindow()
         {
@@ -47,6 +48,8 @@ namespace CanvasTest
 
             MessageBox.Show($"Loaded {_mainViewModel._allFunctions.Count} functions"); // Show a message box with the count of available functions as debug information
             this.Loaded += MainWindow_Loaded; // Attach Loaded event handler
+
+
         }
 
 
@@ -54,9 +57,9 @@ namespace CanvasTest
         // This method is called when the MainWindow is loaded
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-
         }
 
+      
 
         //Method for resetting dragging values
         private void ClearDragState()
@@ -397,29 +400,7 @@ namespace CanvasTest
         #endregion
 
 
-        private void Window_MouseMove(object sender, MouseEventArgs e)
-        {
-            var element = Mouse.DirectlyOver as DependencyObject;
 
-            if (element == null)
-            {
-                HoveredElement.Text = "Nothing under mouse";
-                return;
-            }
-
-            var ancestry = TreeHelper.GetAncestryPath(element);
-            var path = string.Join(" ➝ ", ancestry.Select(a =>
-                $"({a.GetType().Name}{(a is FrameworkElement fe && !string.IsNullOrEmpty(fe.Name) ? $"#{fe.Name}" : "")})"));
-
-            HoveredElement.Text = path;
-            // Existing coordinate tracking
-            var canvasPosition = e.GetPosition(NodeCanvas); // Get the mouse position relative to the Canvas + store in a variable
-            CoordinatesText.Text = $"X: {canvasPosition.X:F0}, Y: {canvasPosition.Y:F0}"; // Display the mouse position in the CoordinatesText TextBlock on the StatusBar
-            debugPanelXCoord.Text = $"X: {canvasPosition.X:F0}";
-            debugPanelYCoord.Text = $"X: {canvasPosition.Y:F0}";
-
-
-        }
 
 
 
@@ -478,6 +459,37 @@ namespace CanvasTest
                 CleanupNode(node);
             }
             _managedNodes.Clear();
+        }
+
+
+
+        //Window Event Handlers
+
+        private void Window_MouseMove(object sender, MouseEventArgs e)
+        {
+
+
+
+            var element = Mouse.DirectlyOver as DependencyObject;
+
+            if (element == null)
+            {
+                HoveredElement.Text = "Nothing under mouse";
+                return;
+            }
+
+            var ancestry = TreeHelper.GetAncestryPath(element);
+            var path = string.Join(" ➝ ", ancestry.Select(a =>
+                $"({a.GetType().Name}{(a is FrameworkElement fe && !string.IsNullOrEmpty(fe.Name) ? $"#{fe.Name}" : "")})"));
+
+            HoveredElement.Text = path;
+            // Existing coordinate tracking
+            var canvasPosition = e.GetPosition(NodeCanvas); // Get the mouse position relative to the Canvas + store in a variable
+            CoordinatesText.Text = $"X: {canvasPosition.X:F0}, Y: {canvasPosition.Y:F0}"; // Display the mouse position in the CoordinatesText TextBlock on the StatusBar
+            debugPanelXCoord.Text = $"X: {canvasPosition.X:F0}";
+            debugPanelYCoord.Text = $"X: {canvasPosition.Y:F0}";
+
+
         }
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

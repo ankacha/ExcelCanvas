@@ -21,34 +21,7 @@
         <converters:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <!-- Grid Background Brush -->
 
-        <DrawingBrush x:Key="CanvasGridBrush" 
-                      Viewport="0,0,25,25" 
-                      ViewportUnits="Absolute" 
-                      TileMode="Tile"
-                      Stretch="Fill">
-            <DrawingBrush.Drawing>
-                <DrawingGroup>
-                    <!-- Background color (matches your ListBox background) -->
-                    <GeometryDrawing Brush="#FAFBFC">
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,0,25,25"/>
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
-                    <!-- Grid lines (subtle, matches your border colors) -->
-                    <GeometryDrawing>
-                        <GeometryDrawing.Pen>
-                            <Pen Brush="#E9ECEF" Thickness="0.5"/>
-                        </GeometryDrawing.Pen>
-                        <GeometryDrawing.Geometry>
-                            <GeometryGroup>
-                                <LineGeometry StartPoint="0,25" EndPoint="25,25"/>
-                                <LineGeometry StartPoint="25,0" EndPoint="25,25"/>
-                            </GeometryGroup>
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
-                </DrawingGroup>
-            </DrawingBrush.Drawing>
-        </DrawingBrush>
+
     </Window.Resources>
 
 
@@ -290,26 +263,28 @@
                 </ListBox>
             </Grid>
             <!-- C A N V A S A R E A -->
-            <Canvas Grid.Column="1"
-                            x:Name="NodeCanvas" 
-                            Background="{StaticResource CanvasGridBrush}"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"
-                            MouseLeftButtonDown="NodeCanvas_LeftButtonDown" 
-                            MouseLeftButtonUp="NodeCanvas_LeftButtonUp" 
-                    MouseRightButtonUp="NodeCanvas_RightButtonUp"        
-                    MouseMove="NodeCanvas_MousePosition"
-                            AllowDrop="True"
-                            Drop="NodeCanvas_Drop"
-                            DragEnter="NodeCanvas_DragEnter"
-                            DragLeave="NodeCanvas_DragLeave">
+            <Grid Grid.Column="1" ClipToBounds="True">
+                <Canvas 
+                                x:Name="NodeCanvas" 
+                                Background="WhiteSmoke"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                MouseLeftButtonDown="NodeCanvas_LeftButtonDown" 
+                                MouseLeftButtonUp="NodeCanvas_LeftButtonUp" 
+                        MouseRightButtonUp="NodeCanvas_RightButtonUp"        
+                        MouseMove="NodeCanvas_MousePosition"
+                                AllowDrop="True"
+                                Drop="NodeCanvas_Drop"
+                                DragEnter="NodeCanvas_DragEnter"
+                                DragLeave="NodeCanvas_DragLeave">
 
-                <Canvas.RenderTransform>
-                    <ScaleTransform x:Name="CanvasScaleTransform" ScaleX="1" ScaleY="1"/>
-                </Canvas.RenderTransform>
+                    <Canvas.RenderTransform>
+                        <ScaleTransform x:Name="CanvasScaleTransform" ScaleX="1" ScaleY="1"/>
+                    </Canvas.RenderTransform>
 
-                <!-- nodes get added as children here in NodeCanvas_Drop-->
-            </Canvas>
+                    <!-- nodes get added as children here in NodeCanvas_Drop-->
+                </Canvas>
+            </Grid>
             <!-- Debug and Properties Panel-->
             <Expander Grid.Column="2" Name="PropertiesPanel" Background="#FAFBFC" BorderBrush="#2b579a" BorderThickness="0.5"
                         HorizontalAlignment="Right" Header="" 
