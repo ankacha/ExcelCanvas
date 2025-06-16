@@ -1,0 +1,385 @@
+﻿<Window x:Class="CanvasTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CanvasTest"
+        xmlns:controls="clr-namespace:CanvasTest.Controls"
+        xmlns:converters="clr-namespace:CanvasTest.Converters"
+        KeyDown="MainWindow_KeyDown"
+        PreviewMouseUp="Window_PreviewMouseUp"
+        MouseMove="Window_MouseMove"
+        MouseLeftButtonDown="Window_MouseLeftButtonDown"
+        MouseLeftButtonUp="Window_MouseLeftButtonUp"
+        MouseRightButtonDown="Window_MouseRightButtonDown"
+        MouseRightButtonUp="Window_MouseRightButtonUp"
+        MouseDown="Window_MouseDown"
+        MouseUp="Window_MouseUp"
+        mc:Ignorable="d"
+        Title="Visual Excel Canvas" Height="450" Width="800">
+    <Window.Resources>
+        <converters:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <!-- Grid Background Brush -->
+
+        <DrawingBrush x:Key="CanvasGridBrush" 
+                      Viewport="0,0,25,25" 
+                      ViewportUnits="Absolute" 
+                      TileMode="Tile"
+                      Stretch="Fill">
+            <DrawingBrush.Drawing>
+                <DrawingGroup>
+                    <!-- Background color (matches your ListBox background) -->
+                    <GeometryDrawing Brush="#FAFBFC">
+                        <GeometryDrawing.Geometry>
+                            <RectangleGeometry Rect="0,0,25,25"/>
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                    <!-- Grid lines (subtle, matches your border colors) -->
+                    <GeometryDrawing>
+                        <GeometryDrawing.Pen>
+                            <Pen Brush="#E9ECEF" Thickness="0.5"/>
+                        </GeometryDrawing.Pen>
+                        <GeometryDrawing.Geometry>
+                            <GeometryGroup>
+                                <LineGeometry StartPoint="0,25" EndPoint="25,25"/>
+                                <LineGeometry StartPoint="25,0" EndPoint="25,25"/>
+                            </GeometryGroup>
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+    </Window.Resources>
+
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Index 0 For menubar-->
+            <RowDefinition Height="*"/>
+            <!-- Index 1 for USerspace-->
+            <RowDefinition Height="Auto"/>
+            <!-- Index 2 for statusbar-->
+        </Grid.RowDefinitions>
+        <Menu Grid.Row="0">
+            <MenuItem Header="_File" Padding="10 0 10 0">
+                <MenuItem Header="_New"/>
+                <MenuItem Header="_Open"/>
+                <MenuItem Header="_Save"/>
+                <MenuItem Header="_Exit"/>
+            </MenuItem>
+        </Menu>
+
+        <!-- U S E R S P A C E -->
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- T O O L B O X -->
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <!--Title-->
+                    <RowDefinition Height="Auto"/>
+                    <!--SearchBox-->
+                    <RowDefinition Height="*"/>
+                    <!--Function List-->
+                </Grid.RowDefinitions>
+                <!--Title-->
+                <TextBlock Grid.Row="0" 
+                           Text="Function List"
+                           FontWeight="SemiBold"
+                           FontSize="14"
+                           Margin=" 10 10 10 5"/>
+                <!-- Search Box -->
+                <Border Grid.Row="1" 
+                        Margin="10,5,10,10"
+                        Background="White"
+                        BorderBrush="#E1E5E9"
+                        BorderThickness="1"
+                        CornerRadius="6">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Search Icon -->
+                        <Path Grid.Column="0" 
+                              Margin="10,0,5,0"
+                              Width="14" Height="14"
+                              Fill="#718096"
+                              Stretch="Uniform"
+                              Data="M21,21 L15,15 M17,10 A7,7 0 1,1 3,10 A7,7 0 1,1 17,10"/>
+
+                        <!-- Search TextBox -->
+                        <TextBox Grid.Column="1"
+                                 x:Name="SearchTextBox"
+                                 BorderThickness="0"
+                                 Background="Transparent"
+                                 VerticalAlignment="Center"
+                                 FontSize="13"
+                                 Foreground="#2D3748"
+                                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
+                            <!--TextChanged="SearchTextBox_TextChanged">-->
+                            <TextBox.Style>
+                                <Style TargetType="TextBox">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="TextBox">
+                                                <Grid>
+                                                    <ScrollViewer x:Name="PART_ContentHost"/>
+                                                    <TextBlock Text="Search functions..." 
+                                                               Foreground="#A0AEC0"
+                                                               Margin="2,0,0,0"
+                                                               VerticalAlignment="Center"
+                                                               IsHitTestVisible="False">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding Text, RelativeSource={RelativeSource TemplatedParent}}" Value="">
+                                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+
+                        <!-- Clear Button -->
+                        <Button Grid.Column="2"
+                                x:Name="ClearSearchButton"
+                                Command="{Binding ClearSearchCommand}"
+                                Content="✕"
+                                FontSize="12"
+                                Foreground="#718096"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Padding="5,0"
+                                Cursor="Hand"
+                                Visibility="{Binding IsClearButtonVisible, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                        <!--Click="ClearSearchButton_Click"/>-->
+                    </Grid>
+                </Border>
+
+                <!--Function List-->
+                <ListBox Grid.Row="2"
+                         ItemsSource="{Binding FilteredFunctions}"
+                         x:Name="FunctionListBox"
+                         PreviewMouseLeftButtonDown="FunctionListBox_PreviewMouseLeftButtonDown"
+                         MouseMove="FunctionListBox_MouseMove"
+                         MouseLeave="FunctionListBox_MouseLeave"
+                         Background="#F8F9FA"
+                         BorderThickness="0"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         Panel.ZIndex="1"
+                         Padding="0 0 5 0">
+
+
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="White" 
+                                    CornerRadius="8" 
+                                    Margin="8,4"
+                                    Padding="12,8"
+                                    BorderThickness="1"
+                                    BorderBrush="Green">
+                                <!-- SAME drop shadow as nodes -->
+                                <Border.Effect>
+                                    <DropShadowEffect Color="#000000" 
+                                                      Opacity="0.08" 
+                                                      ShadowDepth="2" 
+                                                      BlurRadius="8"
+                                                      Direction="270"/>
+                                </Border.Effect>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- EXACT SAME icon styling as nodes -->
+                                    <Border Grid.Column="0"
+                                            Background="#E8F5E8"
+                                            CornerRadius="6"
+                                            Width="32" Height="32"
+                                            Margin="0,0,12,0">
+                                        <Path Fill="#217346" 
+                                              Data="{Binding IconPath}"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              Stretch="Uniform"
+                                              Width="14" Height="14"/>
+                                    </Border>
+
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <!-- SAME typography as nodes -->
+                                        <TextBlock Text="{Binding Name}" 
+                                                   FontFamily="Segoe UI"
+                                                   FontSize="14"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="#2D3748"
+                                                   Margin="0,0,0,2"/>
+
+                                        <TextBlock Text="{Binding Description}" 
+                                                   FontFamily="Segoe UI"
+                                                   FontSize="11"
+                                                   Foreground="#718096"
+                                                   TextWrapping="Wrap"/>
+
+                                        <!-- Category Tag -->
+                                        <Border Background="#F0F8FF"
+                                                CornerRadius="10"
+                                                Padding="6,2"
+                                                HorizontalAlignment="Left"
+                                                Margin="0,4,0,0">
+                                            <TextBlock Text="{Binding Category}"
+                                                       FontSize="9"
+                                                       FontWeight="Medium"
+                                                       Foreground="#2B579A"/>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+
+
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="Margin" Value="0"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBoxItem">
+                                        <Border Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}">
+                                            <ContentPresenter/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <!-- HARMONIZED hover effect -->
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#2B579A"/>
+                                            </Trigger>
+                                            <!-- HARMONIZED selection effect -->
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter Property="Background" Value="#EBF8FF"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+            </Grid>
+            <!-- C A N V A S A R E A -->
+            <Canvas Grid.Column="1"
+                            x:Name="NodeCanvas" 
+                            Background="{StaticResource CanvasGridBrush}"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            MouseLeftButtonDown="NodeCanvas_LeftButtonDown" 
+                            MouseLeftButtonUp="NodeCanvas_LeftButtonUp" 
+                    MouseRightButtonUp="NodeCanvas_RightButtonUp"        
+                    MouseMove="NodeCanvas_MousePosition"
+                            AllowDrop="True"
+                            Drop="NodeCanvas_Drop"
+                            DragEnter="NodeCanvas_DragEnter"
+                            DragLeave="NodeCanvas_DragLeave">
+
+                <Canvas.RenderTransform>
+                    <ScaleTransform x:Name="CanvasScaleTransform" ScaleX="1" ScaleY="1"/>
+                </Canvas.RenderTransform>
+
+                <!-- nodes get added as children here in NodeCanvas_Drop-->
+            </Canvas>
+            <!-- Debug and Properties Panel-->
+            <Expander Grid.Column="2" Name="PropertiesPanel" Background="#FAFBFC" BorderBrush="#2b579a" BorderThickness="0.5"
+                        HorizontalAlignment="Right" Header="" 
+                        ExpandDirection="Left" IsExpanded="True" Width="Auto"
+                      Collapsed="PropertiesPanel_Collapsed">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <!--Properties-->
+                        <RowDefinition Height="*"/>
+                        <!--Debug-->
+
+                    </Grid.RowDefinitions>
+                    <!--Properties-->
+                    <StackPanel Grid.Row="0">
+                        <TextBlock>Properties</TextBlock>
+                    </StackPanel>
+
+
+
+                    <!--Debug-->
+                    <StackPanel Grid.Row="1" VerticalAlignment="Center">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <!--debug Fields-->
+                                <ColumnDefinition Width="*"/>
+                                <!--debug Data-->
+                            </Grid.ColumnDefinitions>
+
+                            <Grid Grid.Column="0">
+                                <Rectangle x:Name="debugMouseLeft" Width="10" Height ="25" Stroke="black" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="35 20 20 20"/>
+                                <Rectangle x:Name="debugMouseMiddle" Width="10" Height ="25" Stroke="black" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="20 20 20 20"/>
+                                <Rectangle x:Name="debugMouseRight" Width="10" Height ="25" Stroke="black" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="20 20 35 35"/>
+
+                                <Rectangle Width="30" Height="50" Stroke=" black" Margin="20 20 20 20"/>
+                            </Grid>
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock x:Name ="debugPanelXCoord"/>
+                                <TextBlock x:Name ="debugPanelYCoord"/>
+                            </StackPanel>
+                        </Grid>
+                        <Grid>
+
+                            <StackPanel Width="200">
+                                <TextBlock Text="Dragstate: "/>
+                                <TextBlock Text="{Binding IsDragging}"/>
+                                <TextBlock Text="ConnectionDrag: OOOO"/>
+                                <TextBlock Text="startposition: OOOO"/>
+                                <TextBlock Text="{Binding _dragStartPoint}"/>
+                                <TextBlock Text="currentposition: OOOO"/>
+                                <TextBlock Text="elementclicked: OOOO"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </Expander>
+        </Grid>
+
+        <!--S T A T U S B A R-->
+        <StatusBar Grid.Row="2">
+            <StatusBarItem Content="Ready"/>
+            <Separator/>
+            <TextBlock x:Name="CoordinatesText"/>
+            <Separator/>
+            <TextBlock x:Name="MouseStatus"/>
+            <Separator/>
+            <TextBlock x:Name="ZoomStatusText" Text="Zoom: 100%"/>
+            <Separator/>
+            <TextBlock x:Name="HoveredElement"/>
+        </StatusBar>
+    </Grid>
+</Window>
