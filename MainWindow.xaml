@@ -7,20 +7,43 @@
         xmlns:controls="clr-namespace:CanvasTest.Controls"
         xmlns:converters="clr-namespace:CanvasTest.Converters"
         KeyDown="MainWindow_KeyDown"
-        PreviewMouseUp="Window_PreviewMouseUp"
-        MouseMove="Window_MouseMove"
-        MouseLeftButtonDown="Window_MouseLeftButtonDown"
-        MouseLeftButtonUp="Window_MouseLeftButtonUp"
-        MouseRightButtonDown="Window_MouseRightButtonDown"
-        MouseRightButtonUp="Window_MouseRightButtonUp"
-        MouseDown="Window_MouseDown"
-        MouseUp="Window_MouseUp"
+        PreviewMouseUp="MainWindow_PreviewMouseUp"
+        MouseMove="MainWindow_MouseMove"
+        MouseLeftButtonDown="MainWindow_MouseLeftButtonDown"
+        MouseLeftButtonUp="MainWindow_MouseLeftButtonUp"
+        MouseRightButtonDown="MainWindow_MouseRightButtonDown"
+        MouseRightButtonUp="MainWindow_MouseRightButtonUp"
+        MouseDown="MainWindow_MouseDown"
+        MouseUp="MainWindow_MouseUp"
         mc:Ignorable="d"
-        Title="Visual Excel Canvas" Height="450" Width="800">
+        Title="Visual Excel Canvas" Height="800" Width="1000">
     <Window.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <!-- Grid Background Brush -->
+        <VisualBrush x:Key="GridBrushMinor"
+                     TileMode="Tile"
+                     Viewport="0 0 10 10" ViewportUnits="Absolute"
+                     Viewbox="0 0 20 20" ViewboxUnits="Absolute">
 
+            <VisualBrush.Visual>
+                <Grid Background ="Transparent">
+                    <Rectangle Stroke="LightGray" StrokeThickness="0.1"
+                             Width="20" Height="20"></Rectangle>
+                </Grid>
+            </VisualBrush.Visual>
+        </VisualBrush>
+        <VisualBrush x:Key="GridBrushMajor"
+                     TileMode="Tile"
+                     Viewport="0 0 50 50" ViewportUnits="Absolute"
+                     Viewbox="0 0 20 20" ViewboxUnits="Absolute">
+
+            <VisualBrush.Visual>
+                <Grid Background ="Transparent">
+                    <Rectangle Stroke="Gainsboro" StrokeThickness="0.1"
+                             Width="20" Height="20"></Rectangle>
+                </Grid>
+            </VisualBrush.Visual>
+        </VisualBrush>
 
     </Window.Resources>
 
@@ -228,8 +251,6 @@
                             </Border>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
-
-
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -264,23 +285,23 @@
             </Grid>
             <!-- C A N V A S A R E A -->
             <Grid Grid.Column="1" ClipToBounds="True">
+                <Rectangle Fill="{StaticResource GridBrushMinor}"/>
+                <Rectangle Fill="{StaticResource GridBrushMajor}"/>
+                
                 <Canvas 
                                 x:Name="NodeCanvas" 
-                                Background="WhiteSmoke"
+                                Background="Transparent"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
                                 MouseLeftButtonDown="NodeCanvas_LeftButtonDown" 
                                 MouseLeftButtonUp="NodeCanvas_LeftButtonUp" 
                         MouseRightButtonUp="NodeCanvas_RightButtonUp"        
-                        MouseMove="NodeCanvas_MousePosition"
+                        MouseMove="NodeCanvas_MouseMove"
                                 AllowDrop="True"
                                 Drop="NodeCanvas_Drop"
                                 DragEnter="NodeCanvas_DragEnter"
                                 DragLeave="NodeCanvas_DragLeave">
 
-                    <Canvas.RenderTransform>
-                        <ScaleTransform x:Name="CanvasScaleTransform" ScaleX="1" ScaleY="1"/>
-                    </Canvas.RenderTransform>
 
                     <!-- nodes get added as children here in NodeCanvas_Drop-->
                 </Canvas>
@@ -294,7 +315,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
                         <!--Properties-->
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="550"/>
                         <!--Debug-->
 
                     </Grid.RowDefinitions>
@@ -306,7 +327,7 @@
 
 
                     <!--Debug-->
-                    <StackPanel Grid.Row="1" VerticalAlignment="Center">
+                    <StackPanel Grid.Row="1" VerticalAlignment="Top">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -330,13 +351,15 @@
                         <Grid>
 
                             <StackPanel Width="200">
-                                <TextBlock Text="Dragstate: "/>
-                                <TextBlock Text="{Binding IsDragging}"/>
-                                <TextBlock Text="ConnectionDrag: OOOO"/>
-                                <TextBlock Text="startposition: OOOO"/>
-                                <TextBlock Text="{Binding _dragStartPoint}"/>
-                                <TextBlock Text="currentposition: OOOO"/>
-                                <TextBlock Text="elementclicked: OOOO"/>
+                                <TextBlock Text="Node Dragstate: " Background="YellowGreen"/>
+                                <TextBlock Text="{Binding IsNodeDragging}" Foreground="White" Background="Gray" Margin="0 0 20 20"/>
+                                <TextBlock Text="Connection DragState:" Background="YellowGreen"/>
+                                <TextBlock Text="{Binding IsConnectionDragging}" Foreground="White" Background="Gray" Margin="0 0 20 20"/>
+                                
+                                <TextBlock Text="startposition:" Background="YellowGreen"/>
+                                <TextBlock Text="{Binding NodeOriginalPosition}" Foreground="White" Background="Gray" Margin="0 0 20 20"/>
+                                                                <TextBlock Text="Element under mouse:" Background="YellowGreen"/>
+                                <TextBlock x:Name="debugHoveredElement" Foreground="white" Background="Gray" TextWrapping="WrapWithOverflow" Margin="0 0 20 20"/>
                             </StackPanel>
                         </Grid>
                     </StackPanel>

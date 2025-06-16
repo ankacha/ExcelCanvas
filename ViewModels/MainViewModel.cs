@@ -6,12 +6,12 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows;
 
 namespace CanvasTest.ViewModels  // Add .ViewModels here
 {
     public class MainViewModel : INotifyPropertyChanged // define the MainViewModel class + implement Interface for telling ui when ViewModel has changed.
     {
-        public ICommand ClearSearchCommand { get; }
         public ObservableCollection<ExcelFunction> AvailableFunctions { get; set; } /* define the AvailableFunctions property to hold available 
                                                                                       Excel functions,  ObservableCollection Notifies the UI that the list has 
                                                                                         been updated. allow get and set methods*/
@@ -21,6 +21,12 @@ namespace CanvasTest.ViewModels  // Add .ViewModels here
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+
+
+        #region Search and filtering logic
+        //specific to buttons, ICommand + ICollectionView
+        
+        public ICommand ClearSearchCommand { get; }
 
         private string _searchText;
         public readonly ObservableCollection<ExcelFunction> _allFunctions;
@@ -43,21 +49,9 @@ namespace CanvasTest.ViewModels  // Add .ViewModels here
                 }
             }
         }
-
-
-        public MainViewModel() // constructor for MainViewModel class
-        {
-            //AvailableFunctions = new ObservableCollection<ExcelFunction>( // initialize the AvailableFunctions property with a ->//
-            //    ExcelFunction.GetAvailableFunctions()                     //->  collection of ExcelFunction objects
-            //);
-            _allFunctions = new ObservableCollection<ExcelFunction>(ExcelFunction.GetAvailableFunctions()); //instantiate a new list from the Model
-            FilteredFunctions = CollectionViewSource.GetDefaultView(_allFunctions); //Initial condition of the list
-            FilteredFunctions.Filter = FilterFunctions; //Setting the .Filter method rulebook
-
-            ClearSearchCommand = new RelayCommand(ClearSearch);
-        }
-
+        
         // Rulebook for the ICollectionView MainViewModel.FilteredFunctions.Filter method.
+
         private bool FilterFunctions(object item)
         {
             if (string.IsNullOrEmpty(SearchText))
@@ -73,33 +67,89 @@ namespace CanvasTest.ViewModels  // Add .ViewModels here
 
             return false;
         }
-        
+
         private void ClearSearch(object parameter)
         {
             SearchText = string.Empty;
         }
 
-        //Drag state for nodes
-        private bool _isDragging;
-        public bool IsDragging
+        #endregion
+
+        public MainViewModel() // constructor for MainViewModel class
         {
-            get => _isDragging;
+            //AvailableFunctions = new ObservableCollection<ExcelFunction>( // initialize the AvailableFunctions property with a ->//
+            //    ExcelFunction.GetAvailableFunctions()                     //->  collection of ExcelFunction objects
+            //);
+            _allFunctions = new ObservableCollection<ExcelFunction>(ExcelFunction.GetAvailableFunctions()); //instantiate a new list from the Model
+            FilteredFunctions = CollectionViewSource.GetDefaultView(_allFunctions); //Initial condition of the list
+            FilteredFunctions.Filter = FilterFunctions; //Setting the .Filter method rulebook
+
+            ClearSearchCommand = new RelayCommand(ClearSearch);
+        }
+
+        #region Dragging properties and logic for UI
+        //Drag state for nodes
+        private bool _isNodeDragging;
+        public bool IsNodeDragging
+        {
+            get => _isNodeDragging;
             set
             {
-                if (_isDragging != value)
+                if (_isNodeDragging != value)
                 {
-                    _isDragging = value;
+                    _isNodeDragging = value;
                     OnPropertyChanged(); // This notifies the UI to update
                 }
             }
         }
 
         //Drag State for Connections
-        // put some code here
-        //
+        private bool _isConnectionDragging;
+        public bool IsConnectionDragging
+        {
+            get => _isConnectionDragging;
+            set
+            {
+                if (_isConnectionDragging != value)
+                {
+                    _isConnectionDragging = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
-        //Starting position on Drag
+            //Continutous 'new' starting position for calculation of the mousemove
+            //NOT THE ORIGINAL POSITION
+        private Point _nodeDragPreviousPosition;
+        public Point NodeDragPreviousPosition
+        {
+            get => _nodeDragPreviousPosition;
+            set
+            {
+                if (_nodeDragPreviousPosition != value)
+                {
+                    _nodeDragPreviousPosition = value;
+                    OnPropertyChanged();
+                }
+            }
 
+        }
 
+        //Gets the node's original position for drag canelling
+        private Point _nodeOriginalPosition;
+        public Point NodeOriginalPosition
+        {
+            get => _nodeOriginalPosition;
+            set
+            {
+                if (_nodeOriginalPosition != value)
+                {
+                    _nodeOriginalPosition = value;
+                    OnPropertyChanged();
+                }
+            }
+
+        }
     }
+    #endregion
 }

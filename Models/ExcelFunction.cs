@@ -17,9 +17,9 @@ namespace CanvasTest.Models //Tells the compiler this is part of the Models name
 
         public class InputDefinition
         {
-            public string Name { get; set; }
-            public string Label { get; set; }
-            public InputType Type { get; set; }
+            public string Name { get; set; } = string.Empty;
+            public string Label { get; set; } = string.Empty;
+            public InputType Type { get; set; } = InputType.Value;
         }
 
         public enum InputType
