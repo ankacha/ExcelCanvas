@@ -84,7 +84,8 @@ namespace CanvasTest.ViewModels  // Add .ViewModels here
             FilteredFunctions = CollectionViewSource.GetDefaultView(_allFunctions); //Initial condition of the list
             FilteredFunctions.Filter = FilterFunctions; //Setting the .Filter method rulebook
 
-            ClearSearchCommand = new RelayCommand(ClearSearch);
+            ClearSearchCommand = new RelayCommand(p => SearchText = string.Empty);
+            DeleteSelectedNodeCommand = new RelayCommand(p => DeleteSelectedNode(), p => SelectedNode != null);
         }
 
         #region Dragging properties and logic for UI
@@ -148,6 +149,37 @@ namespace CanvasTest.ViewModels  // Add .ViewModels here
                     OnPropertyChanged();
                 }
             }
+
+        }
+
+        // D E B U G  P R O P E R T I E S
+        private string _mousePostitionText = "X 0, Y 0";
+        public string MousePostitionText
+        {
+            get => _mousePostitionText;
+            set
+            {
+                if (_mousePostitionText != value)
+                {
+                    _mousePostitionText = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private string _hoveredElementText = "Nothing under mouse";
+        public string HoveredElementText
+        {
+            get => _hoveredElementText;
+            set
+            {
+                if (_hoveredElementText != value)
+                {
+                    _hoveredElementText = value;
+                    OnPropertyChanged();
+                }
+            }
+
 
         }
     }
