@@ -1,562 +1,135 @@
-﻿
-using CanvasTest.Controls;
+﻿using CanvasTest.Controls;
 using CanvasTest.Models;
 using CanvasTest.ViewModels;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Printing;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Media.Media3D;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace CanvasTest
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
-        private MainViewModel _mainViewModel;
+        // The ViewModel is the single source of truth for our application's state.
+        private readonly MainViewModel _mainViewModel;
 
-        private readonly List<Node> _managedNodes = new List<Node>();
+        // Fields to manage the UI aspect of dragging a node on the canvas.
+        private NodeViewModel? _draggedNode;
+        private Point _dragStartOffset;
 
-        private Node objectBeingDragged;
-        private Point NodeOffset; // Offset of the mouse position relative to the node being dragged, used to keep the node under the cursor during drag
-        private Node _selectedNode; // Initialize selected node to null, var stores the currently selected node 
-
-        private Point? _dragStartPoint;
-        private ExcelFunction _draggedItem;
-
-
-
-        // Constructor for MainWindow
         public MainWindow()
         {
-            InitializeComponent();// Initialize the components of the MainWindow
-            DataContext = new MainViewModel(); // Set the DataContext to the MainViewModel to include available functions
-            _mainViewModel = (MainViewModel)DataContext;
-            this.Closing += MainWindow_Closing;
+            InitializeComponent();
 
-            MessageBox.Show($"Loaded {_mainViewModel._allFunctions.Count} functions"); // Show a message box with the count of available functions as debug information
-            this.Loaded += MainWindow_Loaded; // Attach Loaded event handler
-
-
+            // Create and set the ViewModel as the DataContext for the whole window.
+            _mainViewModel = new MainViewModel();
+            DataContext = _mainViewModel;
         }
 
-        // This method is called when the MainWindow is loaded
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-        }
+        // --- Drag-and-Drop from Function List ---
 
-        //Called when Mainwindow is closed
-        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        // This is the ONLY event handler needed for the function list.
+        // It replaces the old MouseMove and MouseLeave handlers.
+        private void FunctionListBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            // Clean up all managed nodes
-            var nodesToCleanup = _managedNodes.ToList(); // Create copy to avoid modification during iteration
-            foreach (var node in nodesToCleanup)
+            // Find the data for the item that was clicked.
+            if (e.OriginalSource is DependencyObject source &&
+                ((FrameworkElement)source).DataContext is ExcelFunction function)
             {
-                CleanupNode(node);
-            }
-            _managedNodes.Clear();
-        }
-
-        //Window Event Handlers
-        private void MainWindow_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            debugMouseLeft.Fill = Brushes.LightGreen;
-        }
-        private void MainWindow_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            debugMouseLeft.Fill = null;
-        }
-        private void MainWindow_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            debugMouseRight.Fill = Brushes.LightGreen;
-        }
-        private void MainWindow_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            debugMouseRight.Fill = null;
-        }
-        private void MainWindow_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.MiddleButton == MouseButtonState.Pressed)
-            {
-                debugMouseMiddle.Fill = Brushes.LightGreen;
+                // Package the data and start the built-in WPF drag-and-drop operation.
+                var dragData = new DataObject("ExcelFunction", function);
+                DragDrop.DoDragDrop((DependencyObject)e.OriginalSource, dragData, DragDropEffects.Copy);
             }
         }
-        private void MainWindow_PreviewMouseUp(object sender, MouseButtonEventArgs e)
-        {
-            // Global safety net - clear drag state when mouse is released anywhere
-            if (e.LeftButton == MouseButtonState.Released)
-            {
-                ClearDragState();
-            }
-        }
-        private void MainWindow_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (e.MiddleButton == MouseButtonState.Released)
-            {
-                debugMouseMiddle.Fill = null;
-            }
-        }
-        private void MainWindow_MouseMove(object sender, MouseEventArgs e)
-        {
 
-
-
-            var element = Mouse.DirectlyOver as DependencyObject;
-
-            if (element == null)
-            {
-                HoveredElement.Text = "Nothing under mouse";
-                return;
-            }
-
-            var ancestry = TreeHelper.GetAncestryPath(element);
-            var path = string.Join(" ➝ ", ancestry.Select(a =>
-                $"({a.GetType().Name}{(a is FrameworkElement fe && !string.IsNullOrEmpty(fe.Name) ? $"#{fe.Name}" : "")})"));
-
-            /*HoveredElement.Text = */
-            debugHoveredElement.Text = path;
-            // Existing coordinate tracking
-            var canvasPosition = e.GetPosition(NodeCanvas); // Get the mouse position relative to the Canvas + store in a variable
-            CoordinatesText.Text = $"X: {canvasPosition.X:F0}, Y: {canvasPosition.Y:F0}"; // Display the mouse position in the CoordinatesText TextBlock on the StatusBar
-            debugPanelXCoord.Text = $"X: {canvasPosition.X:F0}";
-            debugPanelYCoord.Text = $"X: {canvasPosition.Y:F0}";
-
-
-        }
-        private void MainWindow_KeyDown(object sender, KeyEventArgs e) // Event handler for key down events in the MainWindow
-        {
-
-            if (e.Key == Key.Escape && _mainViewModel.IsNodeDragging) //assume if nothing is selected the user is attempting to cancel a drag state
-            {
-                Canvas.SetLeft(objectBeingDragged, _mainViewModel.NodeOriginalPosition.X); // Set the left position of the Node
-                Canvas.SetTop(objectBeingDragged, _mainViewModel.NodeOriginalPosition.Y); // Set the top position of the Node
-                                                                                    //should probably return the node to its original position
-                ClearDragState(); //clear the drag state
-                Mouse.Capture(null); //release the mousecapture of the dragged element
-                e.Handled = true; // sorted mate
-            }
-            
-            if (e.Key == Key.Delete && _selectedNode != null) // Check if Delete key is pressed and a node is selected
-            {
-                DeleteSelectedNode();
-            }
-
-
-
-        }
-
-
-
-
-        
-
-        // This method is called when the mouse moves over the NodeCanvas (debug to statusbar with mouse position)
-        private void NodeCanvas_MouseMove(object sender, MouseEventArgs e) //Eventhandler for mousemove on nodecanvas, sender is the NodeCanvas
-        {
-
-        }
-
-        // This method is called when the left mouse button is pressed on the NodeCanvas (debug to statusbar with entity name and event)
-        private void NodeCanvas_LeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            var elementName = ((FrameworkElement)sender).Name;// Get the name of the element clicked
-            if (e.Source == NodeCanvas) // Check if the source of the event is the NodeCanvas itself
-            {
-                ClearSelection(); // Clear any previous selection when clicking on the canvas
-            }
-            if (e.LeftButton == MouseButtonState.Pressed) // Check if the left button is still pressed
-            {
-                MouseStatus.Text = $"Left Button Pressed {elementName}";    // Write in the status bar what has been clicked
-            }
-
-            //var position = e.GetPosition(NodeCanvas);
-            //MessageBox.Show($"Canvas Clicked at \nX:{position.X:F0}, \nY:{position.Y:F0}");
-        }
-        private async void NodeCanvas_LeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            var elementName = ((FrameworkElement)sender).Name; // Get the name of the element 'unclicked'
-
-
-            if (e.LeftButton == MouseButtonState.Released) // Check if the left button is released
-            {
-                MouseStatus.Text = $"Left Button Released {elementName}"; // write in the status bar what has been unclicked
-            }
-            ClearDragState(); // Clear any drag state
-            Mouse.Capture(null); // Release mouse capture to stop dragging
-            //_connectionDrag = false;
-            //NodeCanvas.Children.Remove(_previewPath);
-            await Task.Delay(500); // Delay to allow the status text to be visible
-            MouseStatus.Text = null; // Clear the status text
-        }        // This method is called when the left mouse button is released on the NodeCanvas (debug to statusbar with entity name and event)
-        private void NodeCanvas_RightButtonUp(object sender, MouseButtonEventArgs e)
-        {
-
-        } 
-        private void NodeCanvas_DragEnter(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent("ExcelFunction"))
-            {
-                e.Effects = DragDropEffects.Move;
-            }
-            else
-            {
-                e.Effects = DragDropEffects.None;
-                NodeCanvas.Cursor = Cursors.No;
-            }
-            e.Handled = true; // Mark the event as handled to prevent further processing
-        }
         private void NodeCanvas_Drop(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent("ExcelFunction"))
+            // When the item is dropped, get its data.
+            if (e.Data.GetData("ExcelFunction") is ExcelFunction function)
             {
-                var function = e.Data.GetData("ExcelFunction") as ExcelFunction;
-                var dropPosition = e.GetPosition(NodeCanvas);
-
-                try
-                {
-                    // Create new node
-                    var newNode = new Node
-                    {
-                        FunctionName = function.Name,
-                        NodeValue = "0",
-                        IconPath = function.IconPath
-                    };
-
-                    // Add event handlers
-                    newNode.MouseLeftButtonDown += Node_LeftButtonDown;
-                    newNode.MouseLeftButtonUp += Node_LeftButtonUp;
-                    newNode.MouseMove += Node_MouseMove;
-
-                    // IMPORTANT: Track the node for cleanup
-                    _managedNodes.Add(newNode);
-
-                    // Position the node
-                    Canvas.SetLeft(newNode, dropPosition.X - 70);
-                    Canvas.SetTop(newNode, dropPosition.Y - 40);
-
-                    // Add to canvas
-                    NodeCanvas.Children.Add(newNode);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error creating node: {ex.Message}");
-                }
+                Point dropPosition = e.GetPosition(NodeCanvas);
+                // Tell the ViewModel to create a new node at this position.
+                _mainViewModel.AddNode(function, new Point(dropPosition.X - 70, dropPosition.Y - 40));
             }
-
-            ClearDragState();
             e.Handled = true;
         }
-        private void NodeCanvas_DragLeave(object sender, DragEventArgs e) //
-        {
-            NodeCanvas.Cursor = Cursors.Arrow; // Reset cursor
-            e.Handled = true; // Mark the event as handled to prevent further processing
-        }// Method called when the mouse leaves the NodeCanvas during a drag operation i.e. if you drag the mouse out of the canvas
 
+
+        // --- Node Interaction on the Canvas ---
+
+        private void Node_LeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.OriginalSource is FrameworkElement clickedElement &&
+       (clickedElement.Name == "LeftConnection" || clickedElement.Name == "RightConnection"))
+            {
+                // This is a connection port, not the node body.
+                // For now, we just prevent dragging.
+                // Later, you would start logic here to draw a connection line.
+                e.Handled = true; // Mark the event as handled
+                return;           // and exit the method to prevent dragging.
+            }
+
+            // Get the ViewModel for the node that was clicked.
+            if (sender is FrameworkElement element && element.DataContext is NodeViewModel nodeVM)
+            {
+                // 1. Tell the MainViewModel that this is now the selected node.
+                _mainViewModel.SelectedNode = nodeVM;
+
+                // 2. Prepare for a drag operation.
+                _draggedNode = nodeVM;
+                _dragStartOffset = e.GetPosition(element);
+                element.CaptureMouse();
+                e.Handled = true; // Stop the event from bubbling further.
+            }
+        }
 
         private void Node_MouseMove(object sender, MouseEventArgs e)
         {
-            if (_mainViewModel.IsNodeDragging && e.LeftButton == MouseButtonState.Pressed) // Check if dragging is active and left button is pressed
+            // If we are dragging a node...
+            if (_draggedNode != null && e.LeftButton == MouseButtonState.Pressed)
             {
-                var currentposition = e.GetPosition(NodeCanvas); // Get the current mouse position relative to the Canvas
-                var objectBeingDragged = (UIElement)sender;// Get the UIElement that is being dragged (the Node)
-
-                //Update the element's position
-                Canvas.SetLeft(objectBeingDragged, currentposition.X - NodeOffset.X); // Set the left position of the Node
-                Canvas.SetTop(objectBeingDragged, currentposition.Y - NodeOffset.Y); // Set the top position of the Node
-
-                //Update the last known mouse position
-                _mainViewModel.NodeDragPreviousPosition = currentposition; // Store the current mouse position for the next move event
+                // ...update the X and Y properties on its ViewModel.
+                Point currentPosition = e.GetPosition(NodeCanvas);
+                _draggedNode.X = currentPosition.X - _dragStartOffset.X;
+                _draggedNode.Y = currentPosition.Y - _dragStartOffset.Y;
             }
-            else if (_mainViewModel.IsConnectionDragging && e.LeftButton == MouseButtonState.Pressed)
-            {
-                var currentposition = e.GetPosition(NodeCanvas); // Get the current mouse position relative to the Canvas
-                var objectBeingDragged = (UIElement)sender;// Get the UIElement that is being dragged (the Node)
+        }
 
-                //Update the element's position
-                //draw a line from the start port to the current position
-
-                //Update the last known mouse position
-                _mainViewModel.NodeDragPreviousPosition = currentposition; // Store the current mouse position for the next move event
-            }
-        }        // This method is called when the mouse moves whilst buttons are held down and isNodeDragging is true (to allow dragging of the Node)
-        private void Node_LeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void Node_LeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            e.Handled = true; // Prevents the event from bubbling up to the Canvas
-
-            var clickedNode = objectBeingDragged = (Node)sender; // Get the Node that was clicked
-            var elementName = ((FrameworkElement)sender).Name; // Get the name of the element clicked
-            _mainViewModel.NodeOriginalPosition = OriginalCoords((Node)sender); // Store the initial mouse position
-
-            //var elementClicked = e.OriginalSource as FrameworkElement;
-            var hoveredElement = Mouse.DirectlyOver as DependencyObject; // Variable to store the element currently under the mouse cursor
-
-
-            //ADD SELECTION LOGIC HERE
-            ClearSelection(); // Clear any previous selection
-            SelectNode(clickedNode); // Select the clicked node
-            if (IsHoveringOverElementNamed("LeftConnection") || IsHoveringOverElementNamed("RightConnection"))
+            // Stop dragging.
+            if (sender is FrameworkElement element)
             {
-                // Don't start drag from the left connection
-                _mainViewModel.IsNodeDragging = false; //lets make sure the node isn't being dragged
-                _mainViewModel.IsConnectionDragging = true;
-                ((UIElement)sender).CaptureMouse(); // ties the mousemovements to the node at the application level 
+                element.ReleaseMouseCapture();
+                _draggedNode = null;
                 e.Handled = true;
-                return;
-            }
-
-
-            if (e.LeftButton == MouseButtonState.Pressed) // Check if the left button is pressed
-            {
-                _mainViewModel.IsNodeDragging = true; // Set dragging state to true
-                MouseStatus.Text = $"Left Button Pressed {elementName}"; // Update the statusbar text
-                NodeOffset = e.GetPosition((UIElement)sender); // Get the offset of the mouse position relative to the node clicked
-                ((UIElement)sender).CaptureMouse(); // Capture mouse to receive mouse move events
-            }
-
-
-        }        // This method is called when the left mouse button is pressed on a Node (to allow selection and dragging of the Node)
-        private async void Node_LeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            e.Handled = true; // Prevents the event from bubbling up to the Canvas and triggering it
-            var elementName = ((FrameworkElement)sender).Name; // Get the name of the element by taking the sender arg, casting it to FWE type which can provide the Name of the node
-            if (e.LeftButton == MouseButtonState.Released) // Check if the left button is released, if it IS
-            {
-                MouseStatus.Text = $"Left Button Released {elementName}"; // Update the status text
-                _mainViewModel.IsNodeDragging = false; // Set dragging state to false ie. 'nothing is being dragged mate
-                _mainViewModel.IsConnectionDragging = false; // Set connection drag to false
-                ((UIElement)sender).ReleaseMouseCapture(); // Release mouse capture
-            }
-            //othewise do nothing special
-            //but do this stuff regardless of whether the button was released or not
-            await Task.Delay(500); // Delay to allow the status text to be visible but not too long to be annoying
-            MouseStatus.Text = null; // Clear the status text in the status bar
-            _mainViewModel.NodeDragPreviousPosition = new Point(0, 0); // Reset the start position which was set when the mouse was pressed down
-
-
-        } //This method is called when the left mouse button is released
-
-
-        // FunctionListBox Event Handlers
-        private void FunctionListBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            // IMPORTANT: Clear any previous state first
-            ClearDragState();
-            // Check what was actually clicked
-            var originalSource = e.OriginalSource as DependencyObject; // Get the original source of the mouse event as a DependencyObject
-
-            // Find if we clicked on a ListBoxItem (not scrollbar)
-            ListBoxItem clickedItem = null; // Initialize clickedItem to null, will be set if we find a ListBoxItem
-            DependencyObject current = originalSource; //Set the dependancy object from the original source of the mouse event as the current object
-
-            while (current != null && clickedItem == null) // Loop until we find a ListBoxItem, and nothing else has been clicked
-            {
-                // If we hit a scrollbar component, bail out
-                if (current is System.Windows.Controls.Primitives.ScrollBar ||
-                    current.GetType().Name.Contains("Thumb") ||
-                    current.GetType().Name.Contains("Track") ||
-                    current.GetType().Name.Contains("RepeatButton"))
-                {
-                    return; // Don't start drag
-                }
-                clickedItem = current as ListBoxItem; // Try to cast the current object to a ListBoxItem, if it is not null then we clicked on a ListBoxItem
-                current = VisualTreeHelper.GetParent(current); // Move up the visual tree to find the parent ListBoxItem, if it exists
-            }
-            // Only prepare for drag if we found a ListBoxItem
-            if (clickedItem != null && clickedItem.DataContext is ExcelFunction function) // Check if the clicked item has a DataContext of type ExcelFunction
-            {
-                _dragStartPoint = e.GetPosition(null);// Store the initial mouse position relative to the screen
-                _draggedItem = function; // set the dragged item to the clicked function as passed in from the DataContext of the clicked ListBoxItem
-            }
-        } //This method is called when the left mouse button is depressed on the FunctionListBox
-        private void FunctionListBox_MouseMove(object sender, MouseEventArgs e)
-        {
-            // Check all conditions before starting drag
-            if (!_mainViewModel.IsNodeDragging &&
-                e.LeftButton == MouseButtonState.Pressed &&
-                _dragStartPoint.HasValue &&
-                _draggedItem != null)
-            {
-                Point currentPosition = e.GetPosition(null);
-                Vector diff = _dragStartPoint.Value - currentPosition;
-
-                if (Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance ||
-                     Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)
-                {
-                    // Capture the item to drag BEFORE starting the operation
-                    var itemToDrag = _draggedItem;
-
-                    // Set dragging flag
-                    _mainViewModel.IsNodeDragging = true;
-
-                    // Create data object with the captured item
-                    var dragData = new DataObject("ExcelFunction", itemToDrag);
-
-                    try
-                    {
-                        // Start the drag operation
-                        DragDrop.DoDragDrop(FunctionListBox, dragData, DragDropEffects.Copy);
-                    }
-
-                    finally
-                    {
-                        // ALWAYS clear state after drag completes
-                        ClearDragState();
-                    }
-                }
-            }
-        } // This method is called when the mouse moves a minimum distance and IS dragging tarted from the FunctionListBox
-        private void FunctionListBox_MouseLeave(object sender, MouseEventArgs e)
-        {
-            // Only clear if we're not in the middle of a drag operation
-            if (!_mainViewModel.IsNodeDragging)
-            {
-                ClearDragState();
-            }
-        }
-        // Handle drag enter (visual feedback)
-
-        //Selection Helper Logic
-       
-
-
-        private void PropertiesPanel_Collapsed(object sender, RoutedEventArgs e)
-        {
-            NodeCanvas.Background = null; // Reset background when properties panel is collapsed
-            NodeCanvas.UpdateLayout(); // Force layout update to apply changes immediately
-            NodeCanvas.Background = this.Resources["CanvasGridBrush"] as Brush; // Restore the background from resources
-
-        }
-
-
-        #region The Helper Zone
-
-        private void SelectNode(Node node)
-        {
-            if (node != null)
-            {
-                _selectedNode = node; // Set the selected node
-                node.IsSelected = true; // Mark the node as selected
-            }
-        }
-        private void ClearSelection()
-        {
-            if (_selectedNode != null)
-            {
-                _selectedNode.IsSelected = false; // Deselect the previously selected node
-                _selectedNode = null; // Clear the selected node reference
             }
         }
 
-        private void DeleteSelectedNode()
+        // --- Global Canvas and Window Events ---
+
+        private void NodeCanvas_LeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (_selectedNode != null)
+            // If the user clicks on the empty canvas, deselect any selected node.
+            if (e.Source == NodeCanvas)
             {
-                // Use the cleanup method instead of just removing from canvas
-                CleanupNode(_selectedNode);
-                _selectedNode = null;
-            }
-        }
-        //Method for resetting dragging values
-        private void ClearDragState()
-        {
-            _dragStartPoint = null;
-            _draggedItem = null;
-            _mainViewModel.IsNodeDragging = false;
-            _mainViewModel.IsConnectionDragging = false;
-        }
-
-        //Find out which item the mouse is currently hovering over
-        private bool IsHoveringOverElementNamed(string targetName)
-        {
-            DependencyObject? element = Mouse.DirectlyOver as DependencyObject;
-
-            while (element != null)
-            {
-                if (element is FrameworkElement fe && fe.Name == targetName)
-                {
-                    return true;
-                }
-
-                // Prefer VisualTreeHelper if possible
-                if (element is Visual || element is Visual3D)
-                {
-                    element = VisualTreeHelper.GetParent(element);
-                }
-                else
-                {
-                    element = LogicalTreeHelper.GetParent(element);
-                }
-            }
-
-            return false;
-        } //Finds out what is currently directly under the mouse
-
-
-        // Helper method to get the visual parent of a specific type - used for drag and drop to target the correct element
-        //private T GetVisualParent<T>(DependencyObject child) where T : DependencyObject
-        //{
-        //    var parent = child;
-        //    while (parent != null)
-        //    {
-        //        if (parent is T typedParent)
-        //            return typedParent;
-        //        parent = VisualTreeHelper.GetParent(parent);
-        //    }
-        //    return null;
-        //}
-
-        private void CleanupNode(Node node)
-        {
-            if (node == null) return;
-
-            try
-            {
-                // Remove all event handlers we added
-                node.MouseLeftButtonDown -= Node_LeftButtonDown;
-                node.MouseLeftButtonUp -= Node_LeftButtonUp;
-                node.MouseMove -= Node_MouseMove;
-
-                // Remove from our tracking list
-                _managedNodes.Remove(node);
-
-                // Remove from canvas
-                NodeCanvas.Children.Remove(node);
-
-                // Optional: Explicitly dispose if node implements IDisposable
-                if (node is IDisposable disposable)
-                {
-                    disposable.Dispose();
-                }
-            }
-            catch (Exception ex)
-            {
-                // Log error but don't crash
-                System.Diagnostics.Debug.WriteLine($"Error cleaning up node: {ex.Message}");
+                _mainViewModel.SelectedNode = null;
             }
         }
 
-        //Helper method to get the original coordinates of a node when it's dragged - for escape/dragcancel functionality
-        private Point OriginalCoords(Node node)
+        private void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
-            double left = Canvas.GetLeft(node);
-            double right = Canvas.GetTop(node);
-            return new Point(left, right);
+            // If the delete key is pressed, tell the ViewModel to delete the selected node.
+            if (e.Key == Key.Delete)
+            {
+                _mainViewModel.DeleteSelectedNode();
+            }
         }
 
-
-        #endregion
-
+        // This handler is just for visual feedback (e.g., changing the cursor).
+        private void NodeCanvas_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effects = e.Data.GetDataPresent("ExcelFunction") ? DragDropEffects.Copy : DragDropEffects.None;
+            e.Handled = true;
+        }
     }
 }
-

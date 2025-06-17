@@ -17,14 +17,14 @@ namespace CanvasTest.ViewModels
         public ExcelFunction FunctionModel { get; }
 
         private double _x;
-        private double X
+        public double X
         {
             get => _x;
             set { _x = value; OnPropertyChanged(); }
         }
 
         private double _y;
-        private double Y
+        public double Y
         {
             get => _y;
             set { _y = value; OnPropertyChanged(); }
@@ -43,7 +43,6 @@ namespace CanvasTest.ViewModels
                 }
             }
         }
-
         //Properties to be displayed by the UI
         public string FunctionName => FunctionModel.Name;
         public string IconPath => FunctionModel.IconPath;
