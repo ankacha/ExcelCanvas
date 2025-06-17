@@ -1,6 +1,8 @@
 ﻿using CanvasTest.Models;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Configuration;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -127,6 +129,50 @@ namespace CanvasTest.ViewModels
                 if (_hoveredElementText != value)
                 {
                     _hoveredElementText = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        //Canvas Panning properties + methods
+        private const double CanvasMinSize = 10000;
+        private const double CanvasMargin = 1000;
+
+
+        private double _panX;
+        public double PanX
+        {
+            get => _panX;
+            set
+            {
+                _panX = value;
+                OnPropertyChanged();
+            }
+        }
+
+
+        private double _panY;
+        public double PanY
+        {
+            get => _panY;
+            set
+            {
+                _panY = value;
+                OnPropertyChanged();
+            }
+        }
+
+
+        //Zoom property
+        private double _scale = 1.0;
+        public double Scale
+        {
+            get => _scale;
+            set
+            {
+                if (_scale!= value)
+                {
+                    _scale = value;
                     OnPropertyChanged();
                 }
             }
