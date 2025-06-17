@@ -102,5 +102,34 @@ namespace CanvasTest.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        //debug properties
+        private string _mousePositionText = "X: 0, Y: 0";
+        public string MousePositionText
+        {
+            get => _mousePositionText;
+            set
+            {
+                if (_mousePositionText != value)
+                {
+                    _mousePositionText = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private string _hoveredElementText = "Nothing under mouse";
+        public string HoveredElementText
+        {
+            get => _hoveredElementText;
+            set
+            {
+                if (_hoveredElementText != value)
+                {
+                    _hoveredElementText = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
     }
 }

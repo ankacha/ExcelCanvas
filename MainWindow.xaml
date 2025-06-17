@@ -7,6 +7,7 @@
         xmlns:controls="clr-namespace:CanvasTest.Controls"
         xmlns:converters="clr-namespace:CanvasTest.Converters"
         KeyDown="MainWindow_KeyDown"
+        MouseMove="MainWindow_MouseMove"
         mc:Ignorable="d"
         Title="Visual Excel Canvas" Height="800" Width="1000">
     <Window.Resources>
@@ -55,6 +56,9 @@
                 <MenuItem Header="_Open"/>
                 <MenuItem Header="_Save"/>
                 <MenuItem Header="_Exit"/>
+            </MenuItem>
+            <MenuItem Header="_View" Padding="10 0 10 0">
+                <MenuItem Header="Debug Window" Click="DebugWindow_MenuItem_Click"/>
             </MenuItem>
         </Menu>
 

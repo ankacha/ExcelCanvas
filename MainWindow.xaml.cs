@@ -115,7 +115,24 @@ namespace CanvasTest
                 _mainViewModel.SelectedNode = null;
             }
         }
+        private void MainWindow_MouseMove(object sender, MouseEventArgs e)
+        {
+            // Existing logic for coordinates...
+            var canvasPosition = e.GetPosition(NodeCanvas);
+            _mainViewModel.MousePositionText = $"X: {canvasPosition.X:F0}, Y: {canvasPosition.Y:F0}";
 
+            // Existing logic for hovered element...
+            if (Mouse.DirectlyOver is DependencyObject element)
+            {
+                var ancestry = TreeHelper.GetAncestryPath(element);
+                var path = string.Join(" ➝ ", ancestry.Select(a => a.GetType().Name));
+                _mainViewModel.HoveredElementText = path;
+            }
+            else
+            {
+                _mainViewModel.HoveredElementText = "Nothing under mouse";
+            }
+        }
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
             // If the delete key is pressed, tell the ViewModel to delete the selected node.
@@ -130,6 +147,25 @@ namespace CanvasTest
         {
             e.Effects = e.Data.GetDataPresent("ExcelFunction") ? DragDropEffects.Copy : DragDropEffects.None;
             e.Handled = true;
+        }
+
+        private DebugWindow? _debugWindow; // Field to hold a reference to the window
+
+        private void DebugWindow_MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            // If the window is not already open, create and show it.
+            if (_debugWindow == null || !_debugWindow.IsLoaded)
+            {
+                _debugWindow = new DebugWindow(_mainViewModel);
+                // When the debug window is closed, clear our reference to it.
+                _debugWindow.Closed += (s, args) => _debugWindow = null;
+                _debugWindow.Show();
+            }
+            else
+            {
+                // If it's already open, just bring it to the front.
+                _debugWindow.Activate();
+            }
         }
     }
 }

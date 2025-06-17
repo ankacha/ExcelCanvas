@@ -8,37 +8,29 @@
         Title="Debug Information" Height="450" Width="400"
         Topmost="True" Background="#F0F0F0">
     <Grid Margin="10">
-
         <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <StackPanel Grid.Row="0">
-                    <TextBlock Text="Live Status" FontSize="16" FontWeight="Bold" Margin="0,0,0,10" Foreground="#1E1E1E"/>
-                    <Border Background="White" CornerRadius="4" Padding="10" BorderBrush="#DDD" BorderThickness="1">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
+            <StackPanel>
+                <TextBlock Text="Live Status" FontSize="16" FontWeight="Bold" Margin="0,0,0,10" Foreground="#1E1E1E"/>
+                <Border Background="White" CornerRadius="4" Padding="10" BorderBrush="#DDD" BorderThickness="1">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
 
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Mouse Position:" FontWeight="SemiBold" Margin="0,0,10,5"/>
-                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding MousePositionText}" />
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Mouse Position:" FontWeight="SemiBold" Margin="0,0,10,5"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding MousePositionText}" />
 
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Hovered Element:" FontWeight="SemiBold" Margin="0,5,10,5" VerticalAlignment="Top"/>
-                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding HoveredElementText}" TextWrapping="Wrap" VerticalAlignment="Top" Height="200"/>
-                        </Grid>
-                    </Border>
-                </StackPanel>
-                <StackPanel Grid.Row="1">
-                    <TextBlock Text="Selected Node" FontSize="16" FontWeight="Bold" Margin="0,20,0,10" Foreground="#1E1E1E"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Hovered Element:" FontWeight="SemiBold" Margin="0,5,10,5" VerticalAlignment="Top"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding HoveredElementText}" TextWrapping="Wrap" VerticalAlignment="Top"/>
+                    </Grid>
+                </Border>
+
+                <TextBlock Text="Selected Node" FontSize="16" FontWeight="Bold" Margin="0,20,0,10" Foreground="#1E1E1E"/>
                 <Border Background="White" CornerRadius="4" Padding="10" BorderBrush="#DDD" BorderThickness="1">
                     <Grid DataContext="{Binding SelectedNode}">
                         <Grid.Style>
@@ -77,8 +69,7 @@
                         </StackPanel>
                     </Grid>
                 </Border>
-                </StackPanel>
-            </Grid>
+            </StackPanel>
         </ScrollViewer>
     </Grid>
 </Window>
