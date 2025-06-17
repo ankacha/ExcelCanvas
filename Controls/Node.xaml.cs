@@ -53,35 +53,39 @@ namespace CanvasTest.Controls
 
 
         // S E L E C T I O N L O G I C
+        public static readonly DependencyProperty IsSelectedProperty =
+            DependencyProperty.Register("IsSelected", typeof(bool), typeof(Node),
+                new PropertyMetadata(false, OnIsSelectedChanged));
+
+
         private bool _isSelected = false;
         public bool IsSelected
         {
-            get => _isSelected;
-            set
-            {
-                _isSelected = value;
-                UpdateSelectionVisual();
-            }
+            get { return (bool)GetValue(IsSelectedProperty); }
+            set { SetValue(IsSelectedProperty, value); }
         }
+
+        private static void OnIsSelectedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var node = (Node)d;
+            node.UpdateSelectionVisual();
+        }
+
         private void UpdateSelectionVisual()
         {
-            var mainBorder = MainBorder; // Now we have a named reference
-
-            if (mainBorder != null)
+            if (MainBorder != null)
             {
-                if (_isSelected)
+                if (IsSelected)
                 {
-                    // Use harmonized selection color (matches ListBox hover)
-                    mainBorder.BorderBrush = new SolidColorBrush(Color.FromRgb(0x3B, 0x82, 0xF6)); // Blue
-                    mainBorder.BorderThickness = new Thickness(2);
-                    mainBorder.Background = new SolidColorBrush(Color.FromRgb(0xEB, 0xF8, 0xFF)); // Light blue bg
+                    MainBorder.BorderBrush = new SolidColorBrush(Color.FromRgb(0x3B, 0x82, 0xF6)); // Blue
+                    MainBorder.BorderThickness = new Thickness(2);
+                    MainBorder.Background = new SolidColorBrush(Color.FromRgb(0xEB, 0xF8, 0xFF)); // Light blue bg
                 }
                 else
                 {
-                    // Default harmonized colors
-                    mainBorder.BorderBrush = new SolidColorBrush(Color.FromRgb(0xE1, 0xE5, 0xE9)); // Light gray
-                    mainBorder.BorderThickness = new Thickness(1);
-                    mainBorder.Background = new SolidColorBrush(Colors.White);
+                    MainBorder.BorderBrush = new SolidColorBrush(Color.FromRgb(0xE1, 0xE5, 0xE9)); // Light gray
+                    MainBorder.BorderThickness = new Thickness(1);
+                    MainBorder.Background = new SolidColorBrush(Colors.White);
                 }
             }
         }
