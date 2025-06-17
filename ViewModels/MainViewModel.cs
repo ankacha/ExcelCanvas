@@ -96,51 +96,11 @@ namespace CanvasTest.ViewModels
         }
 
 
-        //Gets the node's original position for drag canelling
-        private Point _nodeOriginalPosition;
-        public Point NodeOriginalPosition
+        // --- INotifyPropertyChanged Implementation ---
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
-            get => _nodeOriginalPosition;
-            set
-            {
-                if (_nodeOriginalPosition != value)
-                {
-                    _nodeOriginalPosition = value;
-                    OnPropertyChanged();
-                }
-            }
-
-        }
-
-        // D E B U G  P R O P E R T I E S
-        private string _mousePostitionText = "X 0, Y 0";
-        public string MousePostitionText
-        {
-            get => _mousePostitionText;
-            set
-            {
-                if (_mousePostitionText != value)
-                {
-                    _mousePostitionText = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        private string _hoveredElementText = "Nothing under mouse";
-        public string HoveredElementText
-        {
-            get => _hoveredElementText;
-            set
-            {
-                if (_hoveredElementText != value)
-                {
-                    _hoveredElementText = value;
-                    OnPropertyChanged();
-                }
-            }
-
-
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
