@@ -10,7 +10,8 @@
         MouseMove="MainWindow_MouseMove"
         mc:Ignorable="d"
         Title="Visual Excel Canvas" Height="800" Width="1000"
-        Loaded="MainWindow_Loaded">
+        Loaded="MainWindow_Loaded"
+        Closed="MainWindow_Closed">
     <Window.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 

@@ -338,5 +338,11 @@ namespace CanvasTest
 
             return new Point(clampedX, clampedY);
         }
+
+        private void MainWindow_Closed(object sender, EventArgs e)
+        {
+
+            _debugWindow.Close();
+        }
     }
 }
