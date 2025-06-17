@@ -8,14 +8,6 @@
         xmlns:converters="clr-namespace:CanvasTest.Converters"
         MouseMove="MainWindow_MouseMove"
         KeyDown="MainWindow_KeyDown"
-        PreviewMouseUp="MainWindow_PreviewMouseUp"
-        MouseMove="MainWindow_MouseMove"
-        MouseLeftButtonDown="MainWindow_MouseLeftButtonDown"
-        MouseLeftButtonUp="MainWindow_MouseLeftButtonUp"
-        MouseRightButtonDown="MainWindow_MouseRightButtonDown"
-        MouseRightButtonUp="MainWindow_MouseRightButtonUp"
-        MouseDown="MainWindow_MouseDown"
-        MouseUp="MainWindow_MouseUp"
         mc:Ignorable="d"
         Title="Visual Excel Canvas" Height="800" Width="1000">
     <Window.Resources>
@@ -176,16 +168,14 @@
 
                 <!--Function List-->
                 <ListBox Grid.Row="2"
-                         ItemsSource="{Binding FilteredFunctions}"
-                         x:Name="FunctionListBox"
-                         PreviewMouseLeftButtonDown="FunctionListBox_PreviewMouseLeftButtonDown"
-                         MouseMove="FunctionListBox_MouseMove"
-                         MouseLeave="FunctionListBox_MouseLeave"
-                         Background="#F8F9FA"
-                         BorderThickness="0"
-                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                         Panel.ZIndex="1"
-                         Padding="0 0 5 0">
+         ItemsSource="{Binding FilteredFunctions}"
+         x:Name="FunctionListBox"
+         PreviewMouseLeftButtonDown="FunctionListBox_PreviewMouseLeftButtonDown"
+         Background="#F8F9FA"
+         BorderThickness="0"
+         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+         Panel.ZIndex="1"
+         Padding="0 0 5 0">
 
 
                     <ListBox.ItemTemplate>
@@ -291,82 +281,88 @@
             <Grid Grid.Column="1" ClipToBounds="True">
                 <Rectangle Fill="{StaticResource GridBrushMinor}"/>
                 <Rectangle Fill="{StaticResource GridBrushMajor}"/>
-                
+
                 <Canvas 
                                 x:Name="NodeCanvas" 
                                 Background="Transparent"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
                                 MouseLeftButtonDown="NodeCanvas_LeftButtonDown" 
-                                MouseLeftButtonUp="NodeCanvas_LeftButtonUp" 
-                        MouseRightButtonUp="NodeCanvas_RightButtonUp"        
-                        MouseMove="NodeCanvas_MouseMove"
                                 AllowDrop="True"
                                 Drop="NodeCanvas_Drop"
-                                DragEnter="NodeCanvas_DragEnter"
-                                DragLeave="NodeCanvas_DragLeave">
+                                DragEnter="NodeCanvas_DragEnter">
 
+                    <ItemsControl ItemsSource="{Binding Nodes}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <Canvas />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
 
-                    <!-- nodes get added as children here in NodeCanvas_Drop-->
+                        <ItemsControl.ItemContainerStyle>
+                            <Style TargetType="ContentPresenter">
+                                <Setter Property="Canvas.Left" Value="{Binding X}" />
+                                <Setter Property="Canvas.Top" Value="{Binding Y}" />
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <controls:Node 
+                                        FunctionName="{Binding FunctionName}"
+                                        NodeValue="{Binding NodeValue}"
+                                        IconPath="{Binding IconPath}"
+                                        IsSelected="{Binding IsSelected, Mode=TwoWay}"
+                                        MouseLeftButtonDown="Node_LeftButtonDown"
+                                        MouseMove="Node_MouseMove"
+                                        MouseLeftButtonUp="Node_LeftButtonUp"
+                    />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
                 </Canvas>
             </Grid>
             <!-- Debug and Properties Panel-->
-            <Expander Grid.Column="2" Name="PropertiesPanel" Background="#FAFBFC" BorderBrush="#2b579a" BorderThickness="0.5"
-                        HorizontalAlignment="Right" Header="" 
-                        ExpandDirection="Left" IsExpanded="True" Width="Auto"
-                      Collapsed="PropertiesPanel_Collapsed">
-                <Grid>
+            <Expander Header="Properties" Grid.Column="2" Name="PropertiesPanel"
+          HorizontalAlignment="Right"
+          ExpandDirection="Left" IsExpanded="True"
+          DataContext="{Binding SelectedNode}">
+                <Grid Margin="10" MinWidth="250">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <!--Properties-->
-                        <RowDefinition Height="550"/>
-                        <!--Debug-->
-
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <!--Properties-->
-                    <StackPanel Grid.Row="0">
-                        <TextBlock>Properties</TextBlock>
-                    </StackPanel>
 
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding}" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
 
+                    <TextBlock Text="GUID:" FontWeight="Bold" Margin="0,0,10,5" Grid.Row="0" Grid.Column="0"/>
+                    <TextBox Text="{Binding Id, Mode=OneWay}" IsReadOnly="True" Grid.Row="0" Grid.Column="1"/>
 
-                    <!--Debug-->
-                    <StackPanel Grid.Row="1" VerticalAlignment="Top">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <!--debug Fields-->
-                                <ColumnDefinition Width="*"/>
-                                <!--debug Data-->
-                            </Grid.ColumnDefinitions>
+                    <TextBlock Text="Function:" FontWeight="Bold" Margin="0,0,10,5" Grid.Row="1" Grid.Column="0"/>
+                    <TextBox Text="{Binding FunctionName, Mode=OneWay}" IsReadOnly="True" Grid.Row="1" Grid.Column="1"/>
 
-                            <Grid Grid.Column="0">
-                                <Rectangle x:Name="debugMouseLeft" Width="10" Height ="25" Stroke="black" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="35 20 20 20"/>
-                                <Rectangle x:Name="debugMouseMiddle" Width="10" Height ="25" Stroke="black" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="20 20 20 20"/>
-                                <Rectangle x:Name="debugMouseRight" Width="10" Height ="25" Stroke="black" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="20 20 35 35"/>
+                    <TextBlock Text="Position X:" FontWeight="Bold" Margin="0,0,10,5" Grid.Row="2" Grid.Column="0"/>
+                    <TextBox Text="{Binding X, StringFormat={}{0:F0}}" IsReadOnly="True" Grid.Row="2" Grid.Column="1"/>
 
-                                <Rectangle Width="30" Height="50" Stroke=" black" Margin="20 20 20 20"/>
-                            </Grid>
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                <TextBlock x:Name ="debugPanelXCoord"/>
-                                <TextBlock x:Name ="debugPanelYCoord"/>
-                            </StackPanel>
-                        </Grid>
-                        <Grid>
+                    <TextBlock Text="Position Y:" FontWeight="Bold" Margin="0,0,10,5" Grid.Row="3" Grid.Column="0"/>
+                    <TextBox Text="{Binding Y, StringFormat={}{0:F0}}" IsReadOnly="True" Grid.Row="3" Grid.Column="1"/>
 
-                            <StackPanel Width="200">
-                                <TextBlock Text="Node Dragstate: " Background="YellowGreen"/>
-                                <TextBlock Text="{Binding IsNodeDragging}" Foreground="White" Background="Gray" Margin="0 0 20 20"/>
-                                <TextBlock Text="Connection DragState:" Background="YellowGreen"/>
-                                <TextBlock Text="{Binding IsConnectionDragging}" Foreground="White" Background="Gray" Margin="0 0 20 20"/>
-                                
-                                <TextBlock Text="startposition:" Background="YellowGreen"/>
-                                <TextBlock Text="{Binding NodeOriginalPosition}" Foreground="White" Background="Gray" Margin="0 0 20 20"/>
-                                                                <TextBlock Text="Element under mouse:" Background="YellowGreen"/>
-                                <TextBlock x:Name="debugHoveredElement" Foreground="white" Background="Gray" TextWrapping="WrapWithOverflow" Margin="0 0 20 20"/>
-                            </StackPanel>
-                        </Grid>
-                    </StackPanel>
                 </Grid>
             </Expander>
         </Grid>
