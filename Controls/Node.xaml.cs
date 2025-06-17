@@ -21,7 +21,6 @@ namespace CanvasTest.Controls
         public static readonly DependencyProperty IconPathProperty =
                 DependencyProperty.Register("IconPath", typeof(string), typeof(Node),
                     new PropertyMetadata("M12,2 L12,22 M2,12 L22,12")); // Default plus icon
-        public Guid NodeId { get; private set; } = Guid.NewGuid();
 
         public string FunctionName
         {
