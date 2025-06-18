@@ -39,6 +39,7 @@ namespace CanvasTest.ViewModels
 
         // This MUST be public for the UI to bind to it.
         public ObservableCollection<NodeViewModel> Nodes { get; } = new ObservableCollection<NodeViewModel>();
+        public CompositeCollection AllCanvasItems { get; }
 
         private NodeViewModel? _selectedNode;
         public NodeViewModel? SelectedNode
@@ -70,6 +71,7 @@ namespace CanvasTest.ViewModels
         }
 
         // --- Methods to Manipulate the Canvas ---
+
         public void AddNode(ExcelFunction function, Point position)
         {
             var newNode = new NodeViewModel(function, position.X, position.Y);
@@ -134,48 +136,5 @@ namespace CanvasTest.ViewModels
             }
         }
 
-        //Canvas Panning properties + methods
-        private const double CanvasMinSize = 10000;
-        private const double CanvasMargin = 1000;
-
-
-        private double _panX;
-        public double PanX
-        {
-            get => _panX;
-            set
-            {
-                _panX = value;
-                OnPropertyChanged();
-            }
-        }
-
-
-        private double _panY;
-        public double PanY
-        {
-            get => _panY;
-            set
-            {
-                _panY = value;
-                OnPropertyChanged();
-            }
-        }
-
-
-        //Zoom property
-        private double _scale = 1.0;
-        public double Scale
-        {
-            get => _scale;
-            set
-            {
-                if (_scale!= value)
-                {
-                    _scale = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
     }
 }

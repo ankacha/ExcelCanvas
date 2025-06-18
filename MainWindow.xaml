@@ -10,34 +10,10 @@
         MouseMove="MainWindow_MouseMove"
         mc:Ignorable="d"
         Title="Visual Excel Canvas" Height="800" Width="1000"
-        Loaded="MainWindow_Loaded"
-        Closed="MainWindow_Closed">
+
+>
     <Window.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-
-        <SolidColorBrush x:Key="GridLineMajorBrush" Color="#DCDCDC" />
-        <SolidColorBrush x:Key="GridLineMinorBrush" Color="#ECECEC" />
-
-        <VisualBrush x:Key="GridBrushMinor" TileMode="Tile" Viewport="0,0,10,10" ViewportUnits="Absolute">
-            <VisualBrush.Visual>
-                <Rectangle Width="10" Height="10" Stroke="{StaticResource GridLineMinorBrush}" StrokeThickness="0.5" />
-            </VisualBrush.Visual>
-        </VisualBrush>
-
-        <VisualBrush x:Key="GridBrush" TileMode="Tile" Viewport="0,0,100,100" ViewportUnits="Absolute" Viewbox="0,0,100,100" ViewboxUnits="Absolute">
-            <VisualBrush.Visual>
-                <Grid Width="100" Height="100">
-                    <Rectangle Fill="White"/>
-                    <Rectangle>
-                        <Rectangle.Fill>
-                            <StaticResource ResourceKey="GridBrushMinor"/>
-                        </Rectangle.Fill>
-                     </Rectangle>
-                    <Rectangle Stroke="{StaticResource GridLineMajorBrush}" StrokeThickness="1"/>
-                </Grid>
-            </VisualBrush.Visual>
-        </VisualBrush>
-
     </Window.Resources>
 
 
@@ -278,60 +254,40 @@
                 </ListBox>
             </Grid>
             <!-- C A N V A S A R E A -->
-            <Grid Grid.Column="1" ClipToBounds="False">
-                <ScrollViewer x:Name="CanvasScrollViewer"
-              HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"
-              AllowDrop="True"
-              Drop="ScrollViewer_Drop"
-                              Background="#f0f0f0">
+            <Grid Grid.Column="1" ClipToBounds="True">
 
-                    <ItemsControl x:Name="NodeCanvas" 
-                  ItemsSource="{Binding Nodes}"
-                  AllowDrop="True"
-                  Drop="NodeCanvas_Drop"
-                  DragEnter="NodeCanvas_DragEnter"
-                  PreviewMouseLeftButtonDown="NodeCanvas_LeftButtonDown"
-                  PreviewMouseDown="NodeCanvas_PreviewMouseDown"
-                  PreviewMouseMove="NodeCanvas_PreviewMouseMove"
-                  PreviewMouseUp="NodeCanvas_PreviewMouseUp"
-                  PreviewMouseWheel="NodeCanvas_PreviewMouseWheel"
-                  
-                  Width="100000"
-                  Height="100000">
+                <ItemsControl x:Name="WorkCanvas" 
+                              ItemsSource="{Binding Nodes}">
 
-                        <ItemsControl.RenderTransform>
-                            <TransformGroup>
-                                <ScaleTransform ScaleX="{Binding Scale}" ScaleY="{Binding Scale}" />
-                                <TranslateTransform X="{Binding PanX}" Y="{Binding PanY}" />
-                            </TransformGroup>
-                        </ItemsControl.RenderTransform>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <controls:WorkCanvas  
+                                                   HorizontalAlignment="Stretch"  
+                                                   VerticalAlignment="Stretch"
+                                                   AllowDrop="True"
+                                                   Drop="WorkCanvas_Drop"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
 
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <Canvas Background="{StaticResource GridBrush}" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style>
+                            <Setter Property="Canvas.Left" Value="{Binding X}" />
+                            <Setter Property="Canvas.Top" Value="{Binding Y}" />
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
 
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
                                 <controls:Node IsSelected="{Binding IsSelected}"
                                FunctionName="{Binding FunctionName}"
                                NodeValue="{Binding NodeValue}"
-                               IconPath="{Binding IconPath}"
-                               PreviewMouseLeftButtonDown="Node_LeftButtonDown"
-                               PreviewMouseLeftButtonUp="Node_LeftButtonUp"
-                               PreviewMouseMove="Node_MouseMove"/>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
+                               IconPath="{Binding IconPath}"/>
 
-                        <ItemsControl.ItemContainerStyle>
-                            <Style TargetType="ContentPresenter">
-                                <Setter Property="Canvas.Left" Value="{Binding X}" />
-                                <Setter Property="Canvas.Top" Value="{Binding Y}" />
-                            </Style>
-                        </ItemsControl.ItemContainerStyle>
-                    </ItemsControl>
-                </ScrollViewer>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+
+                </ItemsControl>
+
             </Grid>
             <!-- Debug and Properties Panel-->
             <Expander Header="Properties" Grid.Column="2" Name="PropertiesPanel"

@@ -14,7 +14,7 @@ Define an input => plug into a node => get the output ...=> plug it in again som
 ## 📸 Demo
 
 here's what it looksk like so far
-![Application Screenshot](./images/Screenshot 2025-06-17 225316.png "Screenshot of the main canvas with nodes and connections")
+![Application Screenshot](./images/Screenshot 2025-06-17 225316.png) "Screenshot of the main canvas with nodes and connections")
 
 ---
 
