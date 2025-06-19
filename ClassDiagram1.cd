@@ -1,0 +1,176 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="CanvasTest.Models.ConnectionModel">
+    <Position X="0.5" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAAAAAAAAAAUAAAEAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\ConnectionModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CanvasTest.Models.ExcelFunction">
+    <Position X="2.5" Y="9" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Class Name="CanvasTest.Models.ExcelFunction.InputDefinition">
+        <TypeIdentifier>
+          <NewMemberFileName>Models\ExcelFunction.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Enum Name="CanvasTest.Models.ExcelFunction.InputType">
+        <TypeIdentifier>
+          <NewMemberFileName>Models\ExcelFunction.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAiAAAAAAAAAAQAEAAAAAAAAAAEAAAACAA=</HashCode>
+      <FileName>Models\ExcelFunction.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CanvasTest.Models.FormatNodeModel">
+    <Position X="7.75" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\FormatNodeModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CanvasTest.Models.InputNodeModel">
+    <Position X="6" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\InputNodeModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CanvasTest.Models.OperandNodeModel">
+    <Position X="4.25" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\OperandNodeModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CanvasTest.ViewModels.ConnectionViewModel">
+    <Position X="23" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\ConnectionViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CanvasTest.ViewModels.GridViewModel" BaseTypeListCollapsed="true">
+    <Position X="18.25" Y="9" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AQACAgAAAAAAAgAAIAAAAgDAoACAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>ViewModels\GridViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="CanvasTest.ViewModels.MainViewModel" BaseTypeListCollapsed="true">
+    <Position X="12.5" Y="9" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>QAQgAgAAAAAgQABAYkEAABAAgAAEAEABAAAAACIIBAA=</HashCode>
+      <FileName>ViewModels\MainViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="CanvasTest.ViewModels.NodeViewModel" BaseTypeListCollapsed="true">
+    <Position X="15.75" Y="9" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAGAAAIAAQAEAAAIAACAACAkAAAAAAAAAACAAAAYAA=</HashCode>
+      <FileName>ViewModels\NodeViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="CanvasTest.ViewModels.RelayCommand" BaseTypeListCollapsed="true">
+    <Position X="21" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAEACAAQAAECAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\RelayCommand.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="CanvasTest.DebugWindow">
+    <Position X="32.25" Y="13.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DebugWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CanvasTest.MainWindow">
+    <Position X="35" Y="13.25" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAkAQAAwAAAAAAACAAAAARACAAIAACQggAAABA=</HashCode>
+      <FileName>MainWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CanvasTest.Controls.Node">
+    <Position X="28.5" Y="13.25" Width="3" />
+    <TypeIdentifier>
+      <HashCode>BAAgAJAAAAAAEAAAAAACAACAEEKAAAAAIBACAAAgAAA=</HashCode>
+      <FileName>Controls\Node.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CanvasTest.Controls.WorkCanvas">
+    <Position X="24.75" Y="13.25" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAAgAAAAQQAAAAAAAEAAAAQAAEgAAAAAEAI=</HashCode>
+      <FileName>Controls\WorkCanvas.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="System.Object" Collapsed="true">
+    <Position X="11.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="System.Windows.Controls.UserControl" Collapsed="true">
+    <Position X="29.25" Y="11" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="System.Windows.Controls.Canvas" Collapsed="true">
+    <Position X="25.5" Y="9.25" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="System.Windows.Controls.Panel" Collapsed="true">
+    <Position X="25.5" Y="8" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="System.Windows.FrameworkElement" Collapsed="true">
+    <Position X="27.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="System.Windows.UIElement" Collapsed="true">
+    <Position X="27.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="System.Windows.Media.Visual" Collapsed="true">
+    <Position X="27.5" Y="3" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="System.Windows.DependencyObject" Collapsed="true">
+    <Position X="27.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="System.Windows.Threading.DispatcherObject" Collapsed="true">
+    <Position X="27.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="System.Windows.Controls.ContentControl" Collapsed="true">
+    <Position X="31" Y="9.25" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="System.Windows.Controls.Control" Collapsed="true">
+    <Position X="31" Y="8" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="System.Windows.Window" Collapsed="true">
+    <Position X="33.25" Y="11" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

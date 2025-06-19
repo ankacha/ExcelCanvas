@@ -19,7 +19,6 @@ namespace CanvasTest.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            // We don't need to convert back in this case
             throw new NotImplementedException();
         }
     }

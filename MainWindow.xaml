@@ -6,11 +6,34 @@
         xmlns:local="clr-namespace:CanvasTest"
         xmlns:controls="clr-namespace:CanvasTest.Controls"
         xmlns:converters="clr-namespace:CanvasTest.Converters"
-
+        xmlns:viewmodels="clr-namespace:CanvasTest.ViewModels"
+        xmlns:shapes="clr-namespace:System.Windows.Shapes;assembly=PresentationFramework"
+        KeyDown="MainWindow_KeyDown"
+        MouseMove="MainWindow_MouseMove"
         mc:Ignorable="d"
-        Title="Visual Excel Canvas" Height="800" Width="1000">
+        Title="Visual Excel Canvas" Height="800" Width="1000"
+
+>
     <Window.Resources>
-        <converters:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <DataTemplate x:Key="NodeTemplateKey" DataType="{x:Type viewmodels:NodeViewModel}">
+            <controls:Node MouseLeftButtonDown="Node_LeftButtonDown"
+                           MouseLeftButtonUp="Node_LeftButtonUp"
+                           MouseMove="Node_MouseMove"/>
+        </DataTemplate>
+
+        
+                         
+        <DataTemplate x:Key="ShapeTemplateKey" DataType="{x:Type shapes:Shape}">
+            <ContentPresenter Content="{Binding}" />
+        </DataTemplate>
+
+        
+        
+        
+        <converters:CanvasItemTemplateSelector x:Key="CanvasItemSelector"
+                                      NodeTemplate="{StaticResource NodeTemplateKey}"
+                                      ShapeTemplate="{StaticResource ShapeTemplateKey}" />
     </Window.Resources>
 
 
@@ -134,7 +157,7 @@
                                 BorderThickness="0"
                                 Padding="5,0"
                                 Cursor="Hand"
-                                Visibility="{Binding IsClearButtonVisible, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                Visibility="{Binding IsClearButtonVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                         <!--Click="ClearSearchButton_Click"/>-->
                     </Grid>
                 </Border>
@@ -254,7 +277,8 @@
             <Grid Grid.Column="1" ClipToBounds="True">
 
                 <ItemsControl x:Name="WorkCanvas" 
-                              ItemsSource="{Binding AllCanvasItems}">
+                              ItemsSource="{Binding AllCanvasItems}"
+                              ItemTemplateSelector="{StaticResource CanvasItemSelector}">
 
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -275,10 +299,12 @@
 
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <controls:Node IsSelected="{Binding IsSelected}"
-                               FunctionName="{Binding FunctionName}"
-                               NodeValue="{Binding NodeValue}"
-                               IconPath="{Binding IconPath}"/>
+                            <controls:Node Canvas.Left="{Binding X}"
+                                           Canvas.Top="{Binding Y}"
+                                           FunctionName="{Binding FunctionName}"
+                                           NodeValue="{Binding NodeValue}"
+                                           IconPath="{Binding IconPath}"
+                                           MouseLeftButtonDown="Node_LeftButtonDown"/>      
 
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

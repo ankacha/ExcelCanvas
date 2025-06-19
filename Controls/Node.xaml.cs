@@ -53,17 +53,7 @@ namespace CanvasTest.Controls
 
 
         // S E L E C T I O N L O G I C
-        public static readonly DependencyProperty IsSelectedProperty =
-            DependencyProperty.Register("IsSelected", typeof(bool), typeof(Node),
-                new PropertyMetadata(false, OnIsSelectedChanged));
 
-
-        private bool _isSelected = false;
-        public bool IsSelected
-        {
-            get { return (bool)GetValue(IsSelectedProperty); }
-            set { SetValue(IsSelectedProperty, value); }
-        }
 
         private static void OnIsSelectedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -71,6 +61,7 @@ namespace CanvasTest.Controls
             node.UpdateSelectionVisual();
         }
 
+        private bool IsSelected = false;
         private void UpdateSelectionVisual()
         {
             if (MainBorder != null)
@@ -81,12 +72,12 @@ namespace CanvasTest.Controls
                     MainBorder.BorderThickness = new Thickness(2);
                     MainBorder.Background = new SolidColorBrush(Color.FromRgb(0xEB, 0xF8, 0xFF)); // Light blue bg
                 }
-                else
-                {
-                    MainBorder.BorderBrush = new SolidColorBrush(Color.FromRgb(0xE1, 0xE5, 0xE9)); // Light gray
-                    MainBorder.BorderThickness = new Thickness(1);
-                    MainBorder.Background = new SolidColorBrush(Colors.White);
-                }
+                //    else
+                //    {
+                //        MainBorder.BorderBrush = new SolidColorBrush(Color.FromRgb(0xE1, 0xE5, 0xE9)); // Light gray
+                //        MainBorder.BorderThickness = new Thickness(1);
+                //        MainBorder.Background = new SolidColorBrush(Colors.White);
+                //    }
             }
         }
 

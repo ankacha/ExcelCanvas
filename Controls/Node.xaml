@@ -15,8 +15,7 @@
                  Panel.ZIndex="1"
                  x:Name="LeftConnection"
                  MouseLeftButtonDown="LeftConnection_MouseLeftButtonDown"
-                 MouseLeftButtonUp="LeftConnection_MouseLeftButtonUp"
-                    Cursor="Cross">
+                 MouseLeftButtonUp="LeftConnection_MouseLeftButtonUp">
                      <Ellipse.Style>
                     <Style TargetType="Ellipse">
                         <Setter Property="Cursor" Value="Hand"/>
@@ -42,8 +41,7 @@
                  Panel.ZIndex="1"
                  x:Name="RightConnection"
                  MouseLeftButtonDown="RightConnection_MouseLeftButtonDown"
-                 MouseLeftButtonUp="RightConnection_MouseLeftButtonUp"
-                 Cursor="Cross">
+                 MouseLeftButtonUp="RightConnection_MouseLeftButtonUp">
             <Ellipse.Style>
                 <Style TargetType="Ellipse">
                     <Setter Property="Cursor" Value="Hand"/>
@@ -60,11 +58,24 @@
 
             <!-- Main Node Rectangle - HARMONIZED WITH LISTBOX -->
         <Border CornerRadius="8" 
-                Background="White"
-                BorderBrush="#E1E5E9" 
-                BorderThickness="1"
+
                 Margin="6"
                 x:Name="MainBorder">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Background" Value="White" />
+                    <Setter Property="BorderBrush" Value="#E1E5E9" />
+                    <Setter Property="BorderThickness" Value="1" />
+
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="White" />
+                            <Setter Property="BorderBrush" Value="Orange" />
+                            <Setter Property="BorderThickness" Value="3"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
 
             <!-- Drop shadow effect - MATCHES LISTBOX -->
             <Border.Effect>

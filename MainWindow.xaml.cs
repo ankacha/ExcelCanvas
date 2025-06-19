@@ -74,41 +74,16 @@ namespace CanvasTest
                 return;           // and exit the method to prevent dragging.
             }
 
-            // Get the ViewModel for the node that was clicked.
-            if (sender is FrameworkElement element && element.DataContext is NodeViewModel nodeVM)
-            {
-                // 1. Tell the MainViewModel that this is now the selected node.
-                _mainViewModel.SelectedNode = nodeVM;
-
-                // 2. Prepare for a drag operation.
-                _draggedNode = nodeVM;
-                _dragStartOffset = e.GetPosition(element);
-                element.CaptureMouse();
-                e.Handled = true; // Stop the event from bubbling further.
-            }
         }
 
         private void Node_MouseMove(object sender, MouseEventArgs e)
         {
             // If we are dragging a node...
-            if (_draggedNode != null && e.LeftButton == MouseButtonState.Pressed)
-            {
-                // ...update the X and Y properties on its ViewModel.
-                Point currentPosition = e.GetPosition(WorkCanvas);
-                _draggedNode.X = currentPosition.X - _dragStartOffset.X;
-                _draggedNode.Y = currentPosition.Y - _dragStartOffset.Y;
-
-            }
         }
 
         private void Node_LeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (sender is FrameworkElement element)
-            {
-                element.ReleaseMouseCapture();
-                _draggedNode = null;
-                e.Handled = true;
-            }
+
         }
 
         // --- Global Canvas and Window Events ---
@@ -116,10 +91,7 @@ namespace CanvasTest
         private void WorkCanvas_LeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             // If the user clicks on the empty canvas, deselect any selected node.
-            if (e.Source == WorkCanvas)
-            {
-                _mainViewModel.SelectedNode = null;
-            }
+
         }
         private void MainWindow_MouseMove(object sender, MouseEventArgs e)
         {
@@ -141,10 +113,7 @@ namespace CanvasTest
         }
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Delete)
-            {
-                _mainViewModel.DeleteSelectedNode();
-            }
+
         }
 
         // This handler is just for visual feedback (e.g., changing the cursor).
@@ -179,13 +148,6 @@ namespace CanvasTest
         private void WorkCanvas_PreviewMouseMove(object sender, MouseEventArgs e)
         {
 
-            // Handle node dragging (this logic is separate and remains the same)
-            if (_draggedNode != null && e.LeftButton == MouseButtonState.Pressed)
-            {
-                Point currentPosition = e.GetPosition(WorkCanvas);
-                _draggedNode.X = currentPosition.X - _dragStartOffset.X;
-                _draggedNode.Y = currentPosition.Y - _dragStartOffset.Y;
-            }
         }
 
 
