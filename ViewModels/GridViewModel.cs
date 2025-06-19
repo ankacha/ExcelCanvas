@@ -12,8 +12,8 @@ namespace CanvasTest.ViewModels
         // --- Private Fields ---
         private int _gridSizeX = 4000;
         private int _gridSizeY = 4000;
-        private Color _lineColor = Color.FromArgb(0xff, 0xa8, 0xa8, 0xa8);
-        private Color _backgroundColor = Color.FromArgb(0xff, 0xff, 0xff, 0xff);
+        private Color _lineColor = Color.FromArgb(0x22, 0x00, 0x00, 0x00);
+        private Color _backgroundColor = Color.FromArgb(255, 255, 255, 255);
         private Visibility _gridVisibility = Visibility.Visible;
 
         // --- Public Properties ---

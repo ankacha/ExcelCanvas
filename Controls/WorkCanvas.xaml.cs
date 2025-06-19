@@ -11,6 +11,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
@@ -22,13 +23,25 @@ namespace CanvasTest.Controls
     /// </summary>
     public partial class WorkCanvas : Canvas
     {
-        #region Variables
-        private readonly MatrixTransform _transform = new MatrixTransform();
+        #region Dependency properties
+
+        //expose "Transform" as a dependency property for access outside the class
+        public static readonly DependencyProperty TransformProperty =
+            DependencyProperty.Register("Transform", typeof(MatrixTransform), typeof(WorkCanvas),
+                new PropertyMetadata(new MatrixTransform()));
+
+        public MatrixTransform Transform
+        {
+            get { return (MatrixTransform)GetValue(TransformProperty); }
+            set { SetValue(TransformProperty, value); }
+        }
+
+
+        #endregion
+
+        #region class variables
         private Point _initialMousePosition;
-
         public float Zoomfactor { get; set; } = 1.1f;
-
-
         #endregion
 
         public WorkCanvas()
@@ -47,7 +60,7 @@ namespace CanvasTest.Controls
         {
             if (e.ChangedButton == MouseButton.Middle)
             {
-                _initialMousePosition = _transform.Inverse.Transform(e.GetPosition(this));
+                _initialMousePosition = Transform.Inverse.Transform(e.GetPosition(this));
             }
 
         }
@@ -61,14 +74,15 @@ namespace CanvasTest.Controls
         {
             if (e.MiddleButton == MouseButtonState.Pressed)
             {
-                Point mousePosition = _transform.Inverse.Transform(e.GetPosition(this));
+                Point mousePosition = Transform.Inverse.Transform(e.GetPosition(this));
                 Vector delta = Point.Subtract(mousePosition, _initialMousePosition);
                 var translate = new TranslateTransform(delta.X, delta.Y);
-                _transform.Matrix = translate.Value * _transform.Matrix;
+                Matrix newMatrix = translate.Value * Transform.Matrix;
+                this.Transform = new MatrixTransform(newMatrix);
 
                 foreach (UIElement child in this.Children)
                 {
-                    child.RenderTransform = _transform;
+                    child.RenderTransform = Transform;
                 }
             }
 
@@ -84,9 +98,9 @@ namespace CanvasTest.Controls
 
             Point mousePostion = e.GetPosition(this);
 
-            Matrix scaleMatrix = _transform.Matrix;
-            scaleMatrix.ScaleAt(scaleFactor, scaleFactor, mousePostion.X, mousePostion.Y);
-            _transform.Matrix = scaleMatrix;
+            Matrix matrix = this.Transform.Matrix;
+            matrix.ScaleAt(scaleFactor, scaleFactor, mousePostion.X, mousePostion.Y);
+            this.Transform = new MatrixTransform(matrix);
 
             foreach (UIElement child in this.Children)
             {
@@ -99,7 +113,7 @@ namespace CanvasTest.Controls
                 Canvas.SetLeft(child, sx);
                 Canvas.SetTop(child, sy);
 
-                child.RenderTransform = _transform;
+                child.RenderTransform = Transform;
             }
         }
 
