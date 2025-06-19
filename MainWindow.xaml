@@ -257,11 +257,11 @@
             <Grid Grid.Column="1" ClipToBounds="True">
 
                 <ItemsControl x:Name="WorkCanvas" 
-                              ItemsSource="{Binding Nodes}">
+                              ItemsSource="{Binding AllCanvasItems}">
 
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <controls:WorkCanvas  
+                            <controls:WorkCanvas  Background="{Binding Grid.BackgroundBrush}"
                                                    HorizontalAlignment="Stretch"  
                                                    VerticalAlignment="Stretch"
                                                    AllowDrop="True"
@@ -278,7 +278,7 @@
 
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                                <controls:Node IsSelected="{Binding IsSelected}"
+                            <controls:Node IsSelected="{Binding IsSelected}"
                                FunctionName="{Binding FunctionName}"
                                NodeValue="{Binding NodeValue}"
                                IconPath="{Binding IconPath}"/>

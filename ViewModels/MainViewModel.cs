@@ -39,6 +39,7 @@ namespace CanvasTest.ViewModels
 
         // This MUST be public for the UI to bind to it.
         public ObservableCollection<NodeViewModel> Nodes { get; } = new ObservableCollection<NodeViewModel>();
+        public GridViewModel Grid { get; }
         public CompositeCollection AllCanvasItems { get; }
 
         private NodeViewModel? _selectedNode;
@@ -65,6 +66,17 @@ namespace CanvasTest.ViewModels
             _allFunctions = new ObservableCollection<ExcelFunction>(ExcelFunction.GetAvailableFunctions());
             FilteredFunctions = CollectionViewSource.GetDefaultView(_allFunctions);
             FilteredFunctions.Filter = FilterFunctions;
+
+            // Instantiate the GridViewModel
+            Grid = new GridViewModel();
+
+            // Create the CompositeCollection
+            AllCanvasItems = new CompositeCollection
+        {
+            // Add the grid lines first so they are drawn behind the nodes
+            new CollectionContainer { Collection = Grid.GridLines },
+            new CollectionContainer { Collection = Nodes }
+        };
 
             ClearSearchCommand = new RelayCommand(p => SearchText = string.Empty);
             DeleteSelectedNodeCommand = new RelayCommand(p => DeleteSelectedNode(), p => SelectedNode != null);
