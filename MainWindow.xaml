@@ -6,12 +6,9 @@
         xmlns:local="clr-namespace:CanvasTest"
         xmlns:controls="clr-namespace:CanvasTest.Controls"
         xmlns:converters="clr-namespace:CanvasTest.Converters"
-        KeyDown="MainWindow_KeyDown"
-        MouseMove="MainWindow_MouseMove"
-        mc:Ignorable="d"
-        Title="Visual Excel Canvas" Height="800" Width="1000"
 
->
+        mc:Ignorable="d"
+        Title="Visual Excel Canvas" Height="800" Width="1000">
     <Window.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </Window.Resources>

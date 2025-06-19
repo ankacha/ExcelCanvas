@@ -30,9 +30,6 @@ namespace CanvasTest.Controls
         private UIElement _selectedElement;
         private Vector _draggingDelta;
 
-        //private Color _lineColor = Color.FromArgb(0xff, 0xa8, 0xa8, 0xa8);
-        //private Color _backgroundColor = Color.FromArgb(0xff, 0xff, 0xff, 0xff);
-        //private List<Line> _gridLines = new List<Line>();
         public float Zoomfactor { get; set; } = 1.1f;
 
 
@@ -42,108 +39,7 @@ namespace CanvasTest.Controls
         {
             InitializeComponent();
 
-            MouseDown += WorkCanvas_MouseDown;
-            MouseUp += WorkCanvas_MouseUp;
-            MouseMove += WorkCanvas_MouseMove;
-            MouseWheel += WorkCanvas_MouseWheel;
-
-            //BackgroundColor = _backgroundColor;
-            //DrawGridLines(_gridSizeX, _gridSizeY);
-            // draw lines
-
         }
-
-        ////Gridlines
-        //private int _gridSizeX = 4000;
-        //private int _gridSizeY = 4000;
-        //public void DrawGridLines(int gridSizeX, int gridSizeY)
-        //{
-        //    for (int x = -_gridSizeX; x <= _gridSizeX; x += 100)
-        //    {
-        //        Line verticalLine = new Line
-        //        {
-        //            Stroke = new SolidColorBrush(_lineColor),
-        //            X1 = x,
-        //            Y1 = -gridSizeY,
-        //            X2 = x,
-        //            Y2 = _gridSizeY
-        //        };
-
-        //        if (x % 1000 == 0)
-        //        {
-        //            verticalLine.StrokeThickness = 8;
-        //        }
-        //        else
-        //        {
-        //            verticalLine.StrokeThickness = 2;
-        //        }
-
-        //        Children.Add(verticalLine);
-        //        _gridLines.Add(verticalLine);
-        //    }
-
-        //    for (int y = -_gridSizeY; y <= _gridSizeY; y += 100)
-        //    {
-        //        Line horizontalLine = new Line
-        //        {
-        //            Stroke = new SolidColorBrush(_lineColor),
-        //            X1 = -_gridSizeX,
-        //            Y1 = y,
-        //            X2 = _gridSizeX,
-        //            Y2 = y
-        //        };
-
-        //        if (y % 1000 == 0)
-        //        {
-        //            horizontalLine.StrokeThickness = 8;
-        //        }
-        //        else
-        //        {
-        //            horizontalLine.StrokeThickness = 2;
-        //        }
-
-        //        Children.Add(horizontalLine);
-        //        _gridLines.Add(horizontalLine);
-        //    }
-        //}
-
-
-
-        //public Color LineColor
-        //{
-        //    get { return _lineColor; }
-
-        //    set
-        //    {
-        //        _lineColor = value;
-
-        //        foreach (Line line in _gridLines)
-        //        {
-        //            line.Stroke = new SolidColorBrush(_lineColor);
-        //        }
-        //    }
-        //}
-
-        //public Color BackgroundColor
-        //{
-        //    get { return _backgroundColor; }
-
-        //    set
-        //    {
-        //        _backgroundColor = value;
-        //        Background = new SolidColorBrush(_backgroundColor);
-        //    }
-        //}
-
-        //public void SetGridVisibility(Visibility value)
-        //{
-        //    foreach (Line line in _gridLines)
-        //    {
-        //        line.Visibility = value;
-        //    }
-        //}
-
-        //Event handlers
 
 
         private void WorkCanvas_MouseDown(object sender, MouseButtonEventArgs e)

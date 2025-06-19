@@ -1,11 +1,15 @@
 ﻿<Canvas x:Class="CanvasTest.Controls.WorkCanvas"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:CanvasTest.Controls"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" Background="#333333">
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:local="clr-namespace:CanvasTest.Controls"
+        mc:Ignorable="d" 
+        d:DesignHeight="450" d:DesignWidth="800" Background="#333333"
+        MouseDown="WorkCanvas_MouseDown"
+        MouseUp="WorkCanvas_MouseUp"
+        MouseMove="WorkCanvas_MouseMove"
+        MouseWheel="WorkCanvas_MouseWheel">
 
 
 
