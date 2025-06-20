@@ -55,31 +55,7 @@ namespace CanvasTest.Controls
         // S E L E C T I O N L O G I C
 
 
-        private static void OnIsSelectedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var node = (Node)d;
-            node.UpdateSelectionVisual();
-        }
-
-        private bool IsSelected = false;
-        private void UpdateSelectionVisual()
-        {
-            if (MainBorder != null)
-            {
-                if (IsSelected)
-                {
-                    MainBorder.BorderBrush = new SolidColorBrush(Color.FromRgb(0x3B, 0x82, 0xF6)); // Blue
-                    MainBorder.BorderThickness = new Thickness(2);
-                    MainBorder.Background = new SolidColorBrush(Color.FromRgb(0xEB, 0xF8, 0xFF)); // Light blue bg
-                }
-                //    else
-                //    {
-                //        MainBorder.BorderBrush = new SolidColorBrush(Color.FromRgb(0xE1, 0xE5, 0xE9)); // Light gray
-                //        MainBorder.BorderThickness = new Thickness(1);
-                //        MainBorder.Background = new SolidColorBrush(Colors.White);
-                //    }
-            }
-        }
+ 
 
         // CONNECTION LOGIC
         private void LeftConnection_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)

@@ -259,7 +259,7 @@
                                         <ControlTemplate.Triggers>
                                             <!-- HARMONIZED hover effect -->
                                             <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Background" Value="#2B579A"/>
+                                                <Setter Property="Background" Value="#ffce41"/>
                                             </Trigger>
                                             <!-- HARMONIZED selection effect -->
                                             <Trigger Property="IsSelected" Value="True">
@@ -282,12 +282,14 @@
 
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <controls:WorkCanvas 
+                            <controls:WorkCanvas  x:Name="WorkCanvas"
                                                   Background="{Binding Grid.BackgroundBrush}"
                                                    HorizontalAlignment="Stretch"  
                                                    VerticalAlignment="Stretch"
                                                    AllowDrop="True"
-                                                   Drop="WorkCanvas_Drop"/>
+                                                   Drop="WorkCanvas_Drop"
+                                                   MouseLeftButtonDown="WorkCanvas_MouseLeftButtonDown"
+                                                  />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
 
@@ -303,9 +305,19 @@
                             <controls:Node Canvas.Left="{Binding X}"
                                            Canvas.Top="{Binding Y}"
                                            FunctionName="{Binding FunctionName}"
+
                                            NodeValue="{Binding NodeValue}"
                                            IconPath="{Binding IconPath}"
-                                           MouseLeftButtonDown="Node_LeftButtonDown"/>      
+                                           MouseLeftButtonDown="Node_LeftButtonDown">
+                                <controls:Node.ToolTip>
+                                    <ToolTip>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding FunctionName}" FontWeight="Bold" FontSize="14"/>
+                                            <TextBlock Text="{Binding FunctionModel.Description}" />
+                                        </StackPanel>
+                                    </ToolTip>
+                                </controls:Node.ToolTip>
+                            </controls:Node>
 
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

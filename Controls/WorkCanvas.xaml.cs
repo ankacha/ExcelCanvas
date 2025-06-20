@@ -101,7 +101,6 @@ namespace CanvasTest.Controls
             Matrix matrix = this.Transform.Matrix;
             matrix.ScaleAt(scaleFactor, scaleFactor, mousePostion.X, mousePostion.Y);
             this.Transform = new MatrixTransform(matrix);
-
             foreach (UIElement child in this.Children)
             {
                 double x = Canvas.GetLeft(child);

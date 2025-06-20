@@ -82,7 +82,6 @@ namespace CanvasTest.ViewModels
             DeleteSelectedNodeCommand = new RelayCommand(p => DeleteSelectedNode(), p => SelectedNode != null);
         }
 
-        // --- Methods to Manipulate the Canvas ---
 
         public void AddNode(ExcelFunction function, Point position)
         {
