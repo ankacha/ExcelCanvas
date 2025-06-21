@@ -72,11 +72,11 @@ namespace CanvasTest.ViewModels
 
             // Create the CompositeCollection
             AllCanvasItems = new CompositeCollection
-        {
-            // Add the grid lines first so they are drawn behind the nodes
-            new CollectionContainer { Collection = Grid.GridLines },
-            new CollectionContainer { Collection = Nodes }
-        };
+                {
+                    // Add the grid lines first so they are drawn behind the nodes
+                    new CollectionContainer { Collection = Grid.GridLines },
+                    new CollectionContainer { Collection = Nodes }
+                };
 
             ClearSearchCommand = new RelayCommand(p => SearchText = string.Empty);
             DeleteSelectedNodeCommand = new RelayCommand(p => DeleteSelectedNode(), p => SelectedNode != null);
@@ -142,6 +142,33 @@ namespace CanvasTest.ViewModels
                 if (_hoveredElementText != value)
                 {
                     _hoveredElementText = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private string _mainWindowPositionText = "X: 0, Y: 0";
+        public string MainWindowPositionText
+        {
+            get => _mainWindowPositionText;
+            set
+            {
+                if (_mainWindowPositionText != value)
+                {
+                    _mainWindowPositionText = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private string _canvasWorldPositionText = "X: 0, Y: 0";
+        public string CanvasWorldPositionText
+        {
+            get => _canvasWorldPositionText;
+            set
+            {
+                if (_canvasWorldPositionText != value)
+                {
+                    _canvasWorldPositionText = value;
                     OnPropertyChanged();
                 }
             }

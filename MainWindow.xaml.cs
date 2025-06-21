@@ -1,6 +1,7 @@
 ﻿using CanvasTest.Controls;
 using CanvasTest.Models;
 using CanvasTest.ViewModels;
+using System.Security.Cryptography.X509Certificates;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -46,17 +47,22 @@ namespace CanvasTest
             }
         }
 
-
         private void WorkCanvas_Drop(object sender, DragEventArgs e)
         {
-            if (sender is not Controls.WorkCanvas canvas)
+            Point dropPosition = new Point();    
+            if (sender is Controls.WorkCanvas canvas)
             {
-                return; // Safety check
+                dropPosition = e.GetPosition(canvas);
+                dropPosition = canvas.Transform.Inverse.Transform(dropPosition);
             }
-            Point dropPosition = e.GetPosition(canvas);
+            else
+            {
+                return;
+            }
+
             if (e.Data.GetData("ExcelFunction") is ExcelFunction function)
             {
-                _mainViewModel.AddNode(function, new Point(dropPosition.X - 70, dropPosition.Y - 40));
+                _mainViewModel.AddNode(function, new Point(dropPosition.X -70, dropPosition.Y-40));
             }
             e.Handled = true;
         }
@@ -82,7 +88,7 @@ namespace CanvasTest
                     _mainViewModel.SelectedNode = nodeViewModel;
                 }
             }
-            e.Handled= true;
+            e.Handled = true;
         }
 
         private void Node_MouseMove(object sender, MouseEventArgs e)
@@ -107,8 +113,13 @@ namespace CanvasTest
         private void MainWindow_MouseMove(object sender, MouseEventArgs e)
         {
             // Existing logic for coordinates...
-            var canvasPosition = e.GetPosition(WorkCanvasItemsControl);
-            _mainViewModel.MousePositionText = $"X: {canvasPosition.X:F0}, Y: {canvasPosition.Y:F0}";
+            var canvasPagePosition = e.GetPosition(WorkCanvasItemsControl);
+            _mainViewModel.MousePositionText = $"X: {canvasPagePosition.X:F0}, Y: {canvasPagePosition.Y:F0}";
+
+
+                var mainWindowPosition = e.GetPosition(this);
+                _mainViewModel.MainWindowPositionText = $"X: {mainWindowPosition.X:F0}, Y: {mainWindowPosition.Y:F0}";
+
 
             // Existing logic for hovered element...
             if (Mouse.DirectlyOver is DependencyObject element)

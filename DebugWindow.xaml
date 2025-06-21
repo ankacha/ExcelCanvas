@@ -20,13 +20,22 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Mouse Position:" FontWeight="SemiBold" Margin="0,0,10,5"/>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Canvas Page Position:" FontWeight="SemiBold" Margin="0,5,10,5"/>
                         <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding MousePositionText}" />
 
-                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Hovered Element:" FontWeight="SemiBold" Margin="0,5,10,5" VerticalAlignment="Top"/>
-                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding HoveredElementText}" TextWrapping="Wrap" VerticalAlignment="Top"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Main Window Position:" FontWeight="SemiBold" Margin="0,5,10,5"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding MainWindowPositionText}" />
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Canvas World Position:" FontWeight="SemiBold" Margin="0,5,10,5"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding CanvasWorldPositionText}" />
+
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Hovered Element:" FontWeight="SemiBold" Margin="0,5,10,5" VerticalAlignment="Top"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding HoveredElementText}" TextWrapping="Wrap" VerticalAlignment="Top"/>
                     </Grid>
                 </Border>
 
@@ -67,6 +76,7 @@
                             <TextBlock Text=" Y: " Margin="10,0,0,0"/>
                             <TextBox Text="{Binding Y, StringFormat='{}{0:F0}', Mode=OneWay}" IsReadOnly="True" BorderThickness="0" Background="Transparent"/>
                         </StackPanel>
+
                     </Grid>
                 </Border>
             </StackPanel>

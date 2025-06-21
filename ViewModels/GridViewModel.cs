@@ -10,8 +10,8 @@ namespace CanvasTest.ViewModels
     public class GridViewModel : INotifyPropertyChanged
     {
         // --- Private Fields ---
-        private int _gridSizeX = 4000;
-        private int _gridSizeY = 4000;
+        private int _gridSizeX = 5000;
+        private int _gridSizeY = 5000;
         private Color _lineColor = Color.FromArgb(0x22, 0x00, 0x00, 0x00);
         private Color _backgroundColor = Color.FromArgb(255, 255, 255, 255);
         private Visibility _gridVisibility = Visibility.Visible;
@@ -79,8 +79,24 @@ namespace CanvasTest.ViewModels
                     Y2 = gridSizeY,
                     Visibility = _gridVisibility
                 };
-                verticalLine.StrokeThickness = (x % 1000 == 0) ? 8 : 2;
-                GridLines.Add(verticalLine);
+
+                //set the major, minor and origin line styles
+                if ( x % 5000 == 0)
+                {
+                    verticalLine.StrokeThickness = 4;
+                    verticalLine.Stroke = new SolidColorBrush(Colors.Blue);
+                }
+                else if ( x % 1000 == 0) 
+                {
+                    verticalLine.StrokeThickness = 4;
+                    verticalLine.Stroke = new SolidColorBrush(Colors.LightBlue);
+
+                }
+                else
+                {
+                    verticalLine.StrokeThickness = 2;
+                }
+                    GridLines.Add(verticalLine);
             }
 
             // Horizontal Lines
@@ -95,7 +111,23 @@ namespace CanvasTest.ViewModels
                     Y2 = y,
                     Visibility = _gridVisibility
                 };
-                horizontalLine.StrokeThickness = (y % 1000 == 0) ? 8 : 2;
+                //set the major, minor and origin line styles
+
+                if (y % 5000 == 0)
+                {
+                    horizontalLine.StrokeThickness = 4;
+                    horizontalLine.Stroke = new SolidColorBrush(Colors.DarkRed);
+                }
+                else if (y % 1000 == 0)
+                {
+                    horizontalLine.StrokeThickness = 4;
+                    horizontalLine.Stroke = new SolidColorBrush(Colors.Coral);
+
+                }
+                else
+                {
+                    horizontalLine.StrokeThickness = 2;
+                }
                 GridLines.Add(horizontalLine);
             }
         }

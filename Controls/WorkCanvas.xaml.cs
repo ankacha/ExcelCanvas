@@ -1,6 +1,8 @@
-﻿using CanvasTest.ViewModels;
+﻿using CanvasTest.Models;
+using CanvasTest.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,8 +23,13 @@ namespace CanvasTest.Controls
     /// Interaktionslogik für PanAndZoomCanvas.xaml
     /// https://stackoverflow.com/questions/35165349/how-to-drag-rendertransform-with-mouse-in-wpf
     /// </summary>
+    /// 
+
     public partial class WorkCanvas : Canvas
     {
+
+        private readonly MainViewModel _mainViewModel;
+
         #region Dependency properties
 
         //expose "Transform" as a dependency property for access outside the class
@@ -52,6 +59,7 @@ namespace CanvasTest.Controls
             MouseUp += WorkCanvas_MouseUp;
             MouseMove += WorkCanvas_MouseMove;
             MouseWheel += WorkCanvas_MouseWheel;
+            //Drop += WorkCanvas_Drop;
 
         }
 
@@ -80,6 +88,11 @@ namespace CanvasTest.Controls
                 Matrix newMatrix = translate.Value * Transform.Matrix;
                 this.Transform = new MatrixTransform(newMatrix);
 
+                //_mainViewModel.CanvasWorldPositionText = $"X: {mousePosition.X:F0}, Y: {mousePosition.Y:F0}";
+
+                string outputMatrix = Transform.Matrix.ToString();
+                Debug.WriteLine(outputMatrix);
+
                 foreach (UIElement child in this.Children)
                 {
                     child.RenderTransform = Transform;
@@ -101,6 +114,8 @@ namespace CanvasTest.Controls
             Matrix matrix = this.Transform.Matrix;
             matrix.ScaleAt(scaleFactor, scaleFactor, mousePostion.X, mousePostion.Y);
             this.Transform = new MatrixTransform(matrix);
+            string outputMatrix = Transform.Matrix.ToString();
+            Debug.WriteLine(outputMatrix);
             foreach (UIElement child in this.Children)
             {
                 double x = Canvas.GetLeft(child);
@@ -115,6 +130,20 @@ namespace CanvasTest.Controls
                 child.RenderTransform = Transform;
             }
         }
+
+        //private void WorkCanvas_Drop(object sender, DragEventArgs e)
+        //{
+        //    if (sender is not Controls.WorkCanvas canvas)
+        //    {
+        //        return; // Safety check
+        //    }
+        //    Point dropPosition = e.GetPosition(canvas);
+        //    if (e.Data.GetData("ExcelFunction") is ExcelFunction function)
+        //    {
+        //        _mainViewModel.AddNode(function, new Point(dropPosition.X - 70, dropPosition.Y - 40));
+        //    }
+        //    e.Handled = true;
+        //}
 
     }
 }
