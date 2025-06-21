@@ -49,7 +49,7 @@ namespace CanvasTest
 
         private void WorkCanvas_Drop(object sender, DragEventArgs e)
         {
-            Point dropPosition = new Point();    
+            Point dropPosition = new Point();
             if (sender is Controls.WorkCanvas canvas)
             {
                 dropPosition = e.GetPosition(canvas);
@@ -62,7 +62,7 @@ namespace CanvasTest
 
             if (e.Data.GetData("ExcelFunction") is ExcelFunction function)
             {
-                _mainViewModel.AddNode(function, new Point(dropPosition.X -70, dropPosition.Y-40));
+                _mainViewModel.AddNode(function, new Point(dropPosition.X, dropPosition.Y)); //!!! add in the offsets here later to drop node at its centre point
             }
             e.Handled = true;
         }
@@ -72,20 +72,23 @@ namespace CanvasTest
 
         private void Node_LeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.OriginalSource is FrameworkElement clickedElement &&
-        (clickedElement.Name == "LeftConnection" || clickedElement.Name == "RightConnection"))
+            if (e.OriginalSource is FrameworkElement)
             {
-                // This is a connection port, not the node body.
-                // For now, we just prevent dragging.
-                // Later, you would start logic here to draw a connection line.
-                e.Handled = true; // Mark the event as handled
-                return;           // and exit the method to prevent dragging.
+                FrameworkElement clickedElement = (FrameworkElement)e.OriginalSource;
+                if (clickedElement.Name =="LeftConnection" || clickedElement.Name == "RightConnection")
+                {
+                    MessageBox.Show($"You clicked {clickedElement.Name}");
+                    e.Handled= true;
+                    return;
+                }
             }
+
             if (sender is FrameworkElement nodeControl)
             {
                 if (nodeControl.DataContext is NodeViewModel nodeViewModel)
                 {
-                    _mainViewModel.SelectedNode = nodeViewModel;
+                    _mainViewModel.SelectedNode = nodeViewModel; //set the selected node to the current instance of the nodeviewmodel (the node)
+                    _isDraggingNode = true; //set the dragging flag
                 }
             }
             e.Handled = true;
@@ -93,12 +96,13 @@ namespace CanvasTest
 
         private void Node_MouseMove(object sender, MouseEventArgs e)
         {
-            // If we are dragging a node...
+
         }
 
         private void Node_LeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-
+            _isDraggingNode = false;
+            e.Handled = true;
         }
 
         // --- Global Canvas and Window Events ---
@@ -117,8 +121,8 @@ namespace CanvasTest
             _mainViewModel.MousePositionText = $"X: {canvasPagePosition.X:F0}, Y: {canvasPagePosition.Y:F0}";
 
 
-                var mainWindowPosition = e.GetPosition(this);
-                _mainViewModel.MainWindowPositionText = $"X: {mainWindowPosition.X:F0}, Y: {mainWindowPosition.Y:F0}";
+            var mainWindowPosition = e.GetPosition(this);
+            _mainViewModel.MainWindowPositionText = $"X: {mainWindowPosition.X:F0}, Y: {mainWindowPosition.Y:F0}";
 
 
             // Existing logic for hovered element...

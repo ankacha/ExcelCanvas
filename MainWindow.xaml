@@ -22,18 +22,120 @@
                            MouseMove="Node_MouseMove"/>
         </DataTemplate>
 
-        
-                         
+
+
         <DataTemplate x:Key="ShapeTemplateKey" DataType="{x:Type shapes:Shape}">
             <ContentPresenter Content="{Binding}" />
         </DataTemplate>
 
-        
-        
-        
+
+
+
         <converters:CanvasItemTemplateSelector x:Key="CanvasItemSelector"
                                       NodeTemplate="{StaticResource NodeTemplateKey}"
                                       ShapeTemplate="{StaticResource ShapeTemplateKey}" />
+
+
+
+        <Style x:Key="ExpanderHeaderToggleStyle" TargetType="ToggleButton">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border Padding="{TemplateBinding Padding}" Background="Transparent">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Path x:Name="Arrow"
+                              Grid.Column="0"
+                              Data="M 0 0 L 4 4 L 0 8 Z"
+                              Stroke="{Binding Foreground, RelativeSource={RelativeSource TemplatedParent}}"
+                              StrokeThickness="1.5"
+                              Fill="Transparent"
+                              VerticalAlignment="Center"
+                              RenderTransformOrigin="0.5, 0.5">
+                                    <Path.RenderTransform>
+                                        <RotateTransform Angle="0" />
+                                    </Path.RenderTransform>
+                                </Path>
+                                <ContentPresenter Grid.Column="1"
+                                          Margin="8,0,0,0"
+                                          RecognizesAccessKey="True"
+                                          SnapsToDevicePixels="True"
+                                          VerticalAlignment="Center"
+                                          ContentSource="Content"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Arrow" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <RotateTransform Angle="90" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ModernExpanderStyle" TargetType="Expander">
+            <Setter Property="Foreground" Value="#2D3748" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="BorderBrush" Value="#E1E5E9" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="10" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Expander">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="8"
+                        SnapsToDevicePixels="True">
+                            <DockPanel>
+                                <ToggleButton x:Name="HeaderSite"
+              DockPanel.Dock="Left"
+              IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+              Content="{TemplateBinding Header}"
+              ContentTemplate="{TemplateBinding HeaderTemplate}"
+              Padding="12,10"
+              FontWeight="SemiBold"
+              FontSize="14"
+              Foreground="{TemplateBinding Foreground}"
+              Style="{StaticResource ExpanderHeaderToggleStyle}">
+
+                                    <ToggleButton.LayoutTransform>
+                                        <RotateTransform Angle="90" />
+                                    </ToggleButton.LayoutTransform>
+
+                                </ToggleButton>
+                                <ContentPresenter x:Name="ExpandSite"
+                                          DockPanel.Dock="Bottom"
+                                          Focusable="false"
+                                          Visibility="Collapsed"
+                                          Margin="{TemplateBinding Padding}"/>
+                            </DockPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsExpanded" Value="True">
+                                <Setter TargetName="ExpandSite" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+
+
+
+
+
+
     </Window.Resources>
 
 
@@ -287,8 +389,8 @@
                                                    HorizontalAlignment="Stretch"  
                                                    VerticalAlignment="Stretch"
                                                    AllowDrop="True"
-                                                   Drop="WorkCanvas_Drop"
                                                    MouseLeftButtonDown="WorkCanvas_MouseLeftButtonDown"
+                                                   Drop="WorkCanvas_Drop"
                                                   />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
@@ -328,16 +430,17 @@
             <!-- Debug and Properties Panel-->
             <Expander Header="Properties" Grid.Column="2" Name="PropertiesPanel"
           HorizontalAlignment="Right"
-          ExpandDirection="Left" IsExpanded="True"
-          DataContext="{Binding SelectedNode}">
-                <Grid Margin="10" MinWidth="250">
+          ExpandDirection="Left" IsExpanded="False"
+          DataContext="{Binding SelectedNode}"
+                      Style="{StaticResource ModernExpanderStyle}">
+                <Grid Margin="10" MinWidth="275">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
@@ -353,17 +456,17 @@
                         </Style>
                     </Grid.Style>
 
-                    <TextBlock Text="GUID:" FontWeight="Bold" Margin="0,0,10,5" Grid.Row="0" Grid.Column="0"/>
-                    <TextBox Text="{Binding Id, Mode=OneWay}" IsReadOnly="True" Grid.Row="0" Grid.Column="1"/>
+                    <TextBlock Text="GUID:" FontWeight="Bold" Margin="0,0,10,5" Grid.Row="0" Grid.Column="0" />
+                    <TextBox Text="{Binding Id, Mode=OneWay}" Margin="0,0,10,5" IsReadOnly="True" Grid.Row="0" Grid.Column="1" />
 
-                    <TextBlock Text="Function:" FontWeight="Bold" Margin="0,0,10,5" Grid.Row="1" Grid.Column="0"/>
-                    <TextBox Text="{Binding FunctionName, Mode=OneWay}" IsReadOnly="True" Grid.Row="1" Grid.Column="1"/>
+                    <TextBlock Text="Type:" FontWeight="Bold" Margin="0,0,10,5" Grid.Row="1" Grid.Column="0"/>
+                    <TextBox Text="{Binding FunctionName, Mode=OneWay}" Margin="0,0,10,5" IsReadOnly="True" Grid.Row="1" Grid.Column="1"/>
 
-                    <TextBlock Text="Position X:" FontWeight="Bold" Margin="0,0,10,5" Grid.Row="2" Grid.Column="0"/>
-                    <TextBox Text="{Binding X, StringFormat={}{0:F0}}" IsReadOnly="True" Grid.Row="2" Grid.Column="1"/>
+                    <TextBlock Text="X:" FontWeight="Bold" Margin="0,0,10,5" Grid.Row="2" Grid.Column="0"/>
+                    <TextBox Text="{Binding X, StringFormat={}{0:F0}}" Margin="0,0,10,5" IsReadOnly="True" Grid.Row="2" Grid.Column="1"/>
 
-                    <TextBlock Text="Position Y:" FontWeight="Bold" Margin="0,0,10,5" Grid.Row="3" Grid.Column="0"/>
-                    <TextBox Text="{Binding Y, StringFormat={}{0:F0}}" IsReadOnly="True" Grid.Row="3" Grid.Column="1"/>
+                    <TextBlock Text="Y:" FontWeight="Bold" Margin="0,0,10,5" Grid.Row="3" Grid.Column="0"/>
+                    <TextBox Text="{Binding Y, StringFormat={}{0:F0}}" Margin="0,0,10,5" IsReadOnly="True" Grid.Row="3" Grid.Column="1"/>
 
                 </Grid>
             </Expander>
